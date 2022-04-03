@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 project(Allotemplate)
 
@@ -11,15 +12,36 @@ add_executable(${APP_NAME} src/main.cpp)
 # add allolib as a subdirectory to the project
 add_subdirectory(allolib)
 
+# add gamma?
+find_library(GAMMA_LIB Gamma lib)
+find_library(PORTAUDIO_LIB portaudio lib)
+find_library(SNDFILE_LIB sndfile lib)
+find_path(GAMMA_INCLUDES Gamma.h gamma/Gamma)
+include_directories(${GAMMA_INCLUDES})
+
+
 if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/al_ext)
   message("Buiding extensions in al_ext")
   add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/al_ext)
   get_target_property(AL_EXT_LIBRARIES al_ext AL_EXT_LIBRARIES)
-  target_link_libraries(${APP_NAME} PRIVATE ${AL_EXT_LIBRARIES})
+  # target_link_libraries(${APP_NAME} PRIVATE )
 endif()
 
 # link allolib to project
-target_link_libraries(${APP_NAME} PRIVATE al)
+# target_link_libraries(${APP_NAME} PRIVATE al)
+
+#final
+target_link_libraries(${APP_NAME} al ${AL_EXT_LIBRARIES} ${GAMMA_LIB} ${PORTAUDIO_LIB} ${SNDFILE_LIB})
+
+
+
+
+
+
+
+
+
+
 
 # example line for find_package usage
 # find_package(Qt5Core REQUIRED CONFIG PATHS "C:/Qt/5.12.0/msvc2017_64/lib" NO_DEFAULT_PATH)
