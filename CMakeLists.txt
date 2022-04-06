@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -target x86_64-apple-darwin20.3.0") # -target is for m1 mac only
 project(Allotemplate)
 
 # name of application. replace 'app' with desired app name
