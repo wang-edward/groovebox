@@ -1,18 +1,6 @@
-/*
-What is our "Hello world!" app?
-
-An agent orbits around the origin emitting the audio line input. The camera
-view can be switched between a freely navigable keyboard/mouse controlled mode
-and a sphere follow mode.
-
-Requirements:
-2 channels of spatial sound
-2 windows, one front view, one back view
-stereographic rendering
-*/
-
 #include <iostream>
 #include <vector>
+#include <array>
 
 #include "Gamma/SamplePlayer.h"
 
@@ -33,6 +21,7 @@ using namespace al;
 using namespace std;
 
 #define AUDIO_BLOCK_SIZE 128
+#define NUMBER_VOICES 5
 
 typedef struct {
   float *values;
@@ -40,13 +29,39 @@ typedef struct {
   int numblocks;
 } meters_t;
 
+class voice {
+  private:
+    const char* path;
+    SamplePlayer<> player;
+    float gain;
+  public:
+    voice(const char* _path, float _gain) {
+      load_path(_path);
+      gain = _gain;
+    }
+    void load_path(const char* _path) {
+      path = _path;
+      player.load(path);
+    }
+    void gain(float _gain) {
+      gain = _gain;
+    }
+    float output() {
+      return player() * gain;
+    }
+};
+
 struct MyApp : public App {
 
   SamplePlayer<> player1, player2, player_kick, player_clap, player_perc;
 
-  float mix_level[4];
+  array<float, NUMBER_VOICES> mix_level {0.2,0.8,0.1,0.1};
+  array<float,NUMBER_VOICES> mix;
+  array<SamplePlayer<>*, NUMBER_VOICES> players {&player1, &player2, &player_kick, &player_clap, &player_perc};
+  void onInit() override {
 
-  void onInit() {
+  }
+  void onCreate() override {
       player1.load("data/count_new.wav");
       player2.load("data/beat.wav");
       player_kick.load("data/kick.wav"); 
@@ -69,11 +84,15 @@ struct MyApp : public App {
   
   void onSound(AudioIOData &io) override {
     while(io()){
-			// float s = (player1() + player2()) * 0.5;
-      float s = (player1() + player2() + player_kick() + player_clap() + player_perc()) * 0.2;
-			// player1.loop();
-			// player2.loop();
-      // player1.finish(); player2.finish();
+
+      float s = 0;
+      for (int i=0;i<NUMBER_VOICES;i++) {
+        float data = players[i]->read(0);
+        players[i]->advance();
+        s += data * mix_level[i];
+      }
+      
+      // float s = (player1() + player2() + player_kick() + player_clap() + player_perc()) * 1.0;
 			io.out(0) = io.out(1) = s;
 		}
   }
