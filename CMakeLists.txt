@@ -2,6 +2,16 @@ cmake_minimum_required(VERSION 3.0)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -target x86_64-apple-darwin20.3.0") # -target is for m1 mac only
 project(Allotemplate)
 
+include(CheckCCompilerFlag)
+
+set(CMAKE_REQUIRED_LINK_OPTIONS "-arch;x86_64")
+check_c_compiler_flag("-arch x86_64" x86_64Supported)
+message("x86_64Supported=${x86_64Supported}")
+
+set(CMAKE_REQUIRED_LINK_OPTIONS "-arch;arm64")
+check_c_compiler_flag("-arch arm64" arm64Supported)
+message("arm64Supported=${arm64Supported}")
+
 # name of application. replace 'app' with desired app name
 set(APP_NAME app)
 

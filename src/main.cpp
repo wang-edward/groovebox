@@ -3,7 +3,10 @@
 #include <array>
 
 #include "Gamma/SamplePlayer.h"
-
+#include "Gamma/Analysis.h"
+#include "Gamma/Effects.h"
+#include "Gamma/Envelope.h"
+#include "Gamma/Oscillator.h"
 // #include <Player.h>
 
 #include "al/app/al_App.hpp"
@@ -29,70 +32,25 @@ typedef struct {
   int numblocks;
 } meters_t;
 
-class voice {
-  private:
-    const char* path;
-    SamplePlayer<> player;
-    float gain;
-  public:
-    voice(const char* _path, float _gain) {
-      load_path(_path);
-      gain = _gain;
-    }
-    void load_path(const char* _path) {
-      path = _path;
-      player.load(path);
-    }
-    void gain(float _gain) {
-      gain = _gain;
-    }
-    float output() {
-      return player() * gain;
-    }
-};
+#include "sample.hpp"
 
 struct MyApp : public App {
-
-  SamplePlayer<> player1, player2, player_kick, player_clap, player_perc;
-
-  array<float, NUMBER_VOICES> mix_level {0.2,0.8,0.1,0.1};
-  array<float,NUMBER_VOICES> mix;
-  array<SamplePlayer<>*, NUMBER_VOICES> players {&player1, &player2, &player_kick, &player_clap, &player_perc};
+  sample voices[NUMBER_VOICES];
   void onInit() override {
-
+    
   }
   void onCreate() override {
-      player1.load("data/count_new.wav");
-      player2.load("data/beat.wav");
-      player_kick.load("data/kick.wav"); 
-      player_clap.load("data/clap.wav"); 
-      player_perc.load("data/perc.wav");
+    sample test("data/beat.wav", 0.2);
+    sample *new_test = new sample("data/beat.wav", 0.2);
+    // voices[0] = *new_test;
 
-      // Assign player1's buffer to player2;
-      // this can be called safely in the audio thread.
-      // player2.buffer(player1);
-
-      // Make second playback rate slightly higher to create "phasing"
-      // player2.rate(1.0);
-      player1.pos(player2.frames());
-      player2.pos(player2.frames());
-      player_kick.pos(player_kick.frames());
-      player_clap.pos(player_clap.frames());
-      player_perc.pos(player_perc.frames());
-
-    }
+  }
   
   void onSound(AudioIOData &io) override {
     while(io()){
-
       float s = 0;
       for (int i=0;i<NUMBER_VOICES;i++) {
-        float data = players[i]->read(0);
-        players[i]->advance();
-        s += data * mix_level[i];
       }
-      
-      // float s = (player1() + player2() + player_kick() + player_clap() + player_perc()) * 1.0;
 			io.out(0) = io.out(1) = s;
 		}
   }
@@ -104,19 +62,19 @@ struct MyApp : public App {
     int key_pressed = asciiToIndex(k.key());
     switch(key_pressed) {
       case 30:
-        player1.reset();
+        // player1.reset();
         break;
       case 31:
-        player2.reset();
+        // player2.reset();
         break;
       case 32:
-        player_kick.reset();
+        // player_kick.reset();
         break;
       case 33:
-        player_clap.reset();
+        // player_clap.reset();
         break;
       case 34:
-        player_perc.reset();
+        // player_perc.reset();
         break; 
     }
     std::cout<<"end"<<endl;
@@ -125,21 +83,11 @@ struct MyApp : public App {
 
   // Whenever a key is released this function is called
   bool onKeyUp(Keyboard const& k) override {
-    int midiNote = asciiToMIDI(k.key());
-    if (midiNote > 0) {
-    }
-    return true;
   }
     
 };
 
 int main() {
-  std::vector<std::string> filenames;
-  filenames.push_back("data/count_new.wav");
-  filenames.push_back("data/count.wav");
-  filenames.push_back("data/count.wav");
-  filenames.push_back("data/count.wav");
-
   MyApp app;
 
   float sr = 44100;
