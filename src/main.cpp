@@ -1,13 +1,16 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <math.h>
 
 #include "Gamma/SamplePlayer.h"
 
+#include <random>
 // #include <Player.h>
 
 #include "al/app/al_App.hpp"
 // #include "al/sound/al_SoundFile.hpp"
+#include "al/graphics/al_Mesh.hpp"
 #include "al/sound/al_Speaker.hpp"
 #include "al/graphics/al_Shapes.hpp"
 #include "al/scene/al_PolySynth.hpp"
@@ -21,7 +24,7 @@ using namespace al;
 using namespace std;
 
 #define AUDIO_BLOCK_SIZE 128
-#define NUMBER_VOICES 5
+#define NUMBER_VOICES 12
 
 typedef struct {
   float *values;
@@ -29,57 +32,32 @@ typedef struct {
   int numblocks;
 } meters_t;
 
-class voice {
-  private:
-    const char* path;
-    SamplePlayer<> player;
-    float gain;
-  public:
-    voice(const char* _path, float _gain) {
-      load_path(_path);
-      gain = _gain;
-    }
-    void load_path(const char* _path) {
-      path = _path;
-      player.load(path);
-    }
-    void gain(float _gain) {
-      gain = _gain;
-    }
-    float output() {
-      return player() * gain;
-    }
-};
-
 struct MyApp : public App {
+  SamplePlayer<> samples[NUMBER_VOICES];
+  array<float, NUMBER_VOICES> mix_level {0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.4, 0.2, 0.2, 0.2};
+  array<Mesh, NUMBER_VOICES> discs;
 
-  SamplePlayer<> player1, player2, player_kick, player_clap, player_perc;
 
-  array<float, NUMBER_VOICES> mix_level {0.2,0.8,0.1,0.1};
-  array<float,NUMBER_VOICES> mix;
-  array<SamplePlayer<>*, NUMBER_VOICES> players {&player1, &player2, &player_kick, &player_clap, &player_perc};
   void onInit() override {
+    navControl().active(false);
+    samples[0].load("data/count_new.wav");
+    samples[1].load("data/beat.wav");
+    samples[2].load("data/kick.wav");
+    samples[3].load("data/clap.wav");
+    samples[4].load("data/perc.wav");
 
+    samples[5].load("data/intro.wav");
+    samples[6].load("data/first_half.wav");
+    samples[7].load("data/second_half.wav");
+    samples[8].load("data/follow_up.wav");
   }
   void onCreate() override {
-      player1.load("data/count_new.wav");
-      player2.load("data/beat.wav");
-      player_kick.load("data/kick.wav"); 
-      player_clap.load("data/clap.wav"); 
-      player_perc.load("data/perc.wav");
-
-      // Assign player1's buffer to player2;
-      // this can be called safely in the audio thread.
-      // player2.buffer(player1);
-
-      // Make second playback rate slightly higher to create "phasing"
-      // player2.rate(1.0);
-      player1.pos(player2.frames());
-      player2.pos(player2.frames());
-      player_kick.pos(player_kick.frames());
-      player_clap.pos(player_clap.frames());
-      player_perc.pos(player_perc.frames());
-
+      for (int i=0;i<NUMBER_VOICES;i++) {
+        addDisc(discs[i], 0.5, 30);
+        discs[i].color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20);
+        discs[i].translate((i%4)-1.5,floor(i/4)-1,-8);
+        samples[i].pos(samples[i].frames());
+      }
     }
   
   void onSound(AudioIOData &io) override {
@@ -87,39 +65,36 @@ struct MyApp : public App {
 
       float s = 0;
       for (int i=0;i<NUMBER_VOICES;i++) {
-        float data = players[i]->read(0);
-        players[i]->advance();
+        float data = samples[i].read(0);
+        samples[i].advance();
         s += data * mix_level[i];
       }
-      
-      // float s = (player1() + player2() + player_kick() + player_clap() + player_perc()) * 1.0;
 			io.out(0) = io.out(1) = s;
 		}
   }
 
-  bool onKeyDown(Keyboard const &k) override {
-    std::cout<<"start"<<endl;
+  void onAnimate(double dt) {};
 
+  void onDraw (Graphics &g) {
+    g.clear();
+    g.meshColor();
+    for (int i=0;i<NUMBER_VOICES;i++) {
+      // g.color(discs[i].colors());
+      g.draw(discs[i]);
+    }
+  }
+
+  bool onKeyDown(Keyboard const &k) override {
 
     int key_pressed = asciiToIndex(k.key());
-    switch(key_pressed) {
-      case 30:
-        player1.reset();
-        break;
-      case 31:
-        player2.reset();
-        break;
-      case 32:
-        player_kick.reset();
-        break;
-      case 33:
-        player_clap.reset();
-        break;
-      case 34:
-        player_perc.reset();
-        break; 
-    }
-    std::cout<<"end"<<endl;
+    key_pressed -= 30;
+    key_pressed = abs(key_pressed) % 12;
+
+    discs[key_pressed].colors().pop_back();
+    discs[key_pressed].color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20);
+    samples[key_pressed].reset();
+
+    std::cout<<key_pressed<<endl;
     return true;
   }
 
@@ -141,6 +116,10 @@ int main() {
   filenames.push_back("data/count.wav");
 
   MyApp app;
+
+  // Mesh test;
+  // addCube(test, 1.0);
+  // test.translate(0,0,2);
 
   float sr = 44100;
   app.audioDomain()->audioIO().gain(0.5);  // Global output gain.
