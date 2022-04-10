@@ -10,6 +10,7 @@
 
 #include "al/app/al_App.hpp"
 // #include "al/sound/al_SoundFile.hpp"
+#include "al/graphics/al_Font.hpp"
 #include "al/graphics/al_Mesh.hpp"
 #include "al/sound/al_Speaker.hpp"
 #include "al/graphics/al_Shapes.hpp"
@@ -37,9 +38,13 @@ struct MyApp : public App {
   array<float, NUMBER_VOICES> mix_level {0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.4, 0.2, 0.2, 0.2};
   array<Mesh, NUMBER_VOICES> discs;
 
+  Font font;
+  Mesh font_mesh;
+
 
   void onInit() override {
     navControl().active(false);
+    nav().pos(0,0,10);
     samples[0].load("data/count_new.wav");
     samples[1].load("data/beat.wav");
     samples[2].load("data/kick.wav");
@@ -55,9 +60,13 @@ struct MyApp : public App {
       for (int i=0;i<NUMBER_VOICES;i++) {
         addDisc(discs[i], 0.5, 30);
         discs[i].color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20);
-        discs[i].translate((i%4)-1.5,floor(i/4)-1,-8);
+        discs[i].translate((i%4)-1.5,floor(i/4)-1,0);
         samples[i].pos(samples[i].frames());
       }
+
+      font.load("data/Roboto-Regular.ttf",28,1024);
+      font.alignCenter();
+      font.write(font_mesh, "hell font", 0.2f);
     }
   
   void onSound(AudioIOData &io) override {
@@ -77,11 +86,20 @@ struct MyApp : public App {
 
   void onDraw (Graphics &g) {
     g.clear();
+    g.blending(true);
+    g.blendTrans();
+
+    g.texture();
+    font.tex.bind();
+    g.draw(font_mesh);
+    font.tex.unbind();
     g.meshColor();
     for (int i=0;i<NUMBER_VOICES;i++) {
       // g.color(discs[i].colors());
       g.draw(discs[i]);
     }
+
+    
   }
 
   bool onKeyDown(Keyboard const &k) override {
