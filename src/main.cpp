@@ -3,6 +3,7 @@
 #include <array>
 #include <filesystem>
 #include <string>
+#include <random>
 
 #include "Gamma/SamplePlayer.h"
 #include "Gamma/Analysis.h"
@@ -13,6 +14,8 @@
 
 #include "al/app/al_App.hpp"
 // #include "al/sound/al_SoundFile.hpp"
+#include "al/graphics/al_Font.hpp"
+#include "al/graphics/al_Mesh.hpp"
 #include "al/sound/al_Speaker.hpp"
 #include "al/graphics/al_Shapes.hpp"
 #include "al/scene/al_PolySynth.hpp"
@@ -83,6 +86,10 @@ struct MyApp : public App {
 
 int main() {
   MyApp app;
+
+  // Mesh test;
+  // addCube(test, 1.0);
+  // test.translate(0,0,2);
 
   float sr = 44100;
   app.audioDomain()->audioIO().gain(0.5);  // Global output gain.
