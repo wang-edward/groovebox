@@ -68,6 +68,7 @@ class sample_voice : public SynthVoice {
  protected:
   float x, y, z;
   Mesh mMesh;
+  
 };
 
 // We will use PolySynth to handle voice triggering and allocation
@@ -83,7 +84,7 @@ struct MyApp : public App {
                                  // will be using keyboard for note triggering
     nav().pos(0,0,10);
     for (int i=0;i<16;i++) {
-      
+
     }
   }
 
