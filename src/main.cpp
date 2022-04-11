@@ -33,7 +33,32 @@ typedef struct {
   int numblocks;
 } meters_t;
 
+class sample_voice : public SynthVoice {
+  protected:
+    Mesh mMesh;
+  public:
+    sample_voice() {
+      addCube(mMesh, 1.0);
+    }
+
+    void onProcess(AudioIOData &io) override {
+      io.out(0)+=0.1;
+    }
+    void onProcess(Graphics &g) override {
+      g.pushMatrix();
+      g.blending(true);
+      g.blendTrans();
+      g.color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20);
+
+      g.draw(mMesh);
+      g.popMatrix();
+    }
+    void onTriggerOn() override { cout<<"HELLO"<<endl; }
+    void onTriggerOff() override {cout <<"GOODBYE"<<endl; }
+};
+
 struct MyApp : public App {
+  PolySynth pSynth;
   SamplePlayer<> samples[NUMBER_VOICES];
   array<float, NUMBER_VOICES> mix_level {0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.4, 0.2, 0.2, 0.2};
   array<Mesh, NUMBER_VOICES> discs;
@@ -43,7 +68,7 @@ struct MyApp : public App {
 
 
   void onInit() override {
-    navControl().active(false);
+    // navControl().active(false);
     nav().pos(0,0,10);
     samples[0].load("data/count_new.wav");
     samples[1].load("data/beat.wav");
@@ -59,7 +84,7 @@ struct MyApp : public App {
   void onCreate() override {
       for (int i=0;i<NUMBER_VOICES;i++) {
         addDisc(discs[i], 0.5, 30);
-        discs[i].color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20);
+        discs[i].color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20, 1.0);
         discs[i].translate((i%4)-1.5,floor(i/4)-1,0);
         samples[i].pos(samples[i].frames());
       }
@@ -67,6 +92,8 @@ struct MyApp : public App {
       font.load("data/Roboto-Regular.ttf",28,1024);
       font.alignCenter();
       font.write(font_mesh, "hell font", 0.2f);
+
+      pSynth.allocatePolyphony<sample_voice>(16);
     }
   
   void onSound(AudioIOData &io) override {
@@ -82,22 +109,25 @@ struct MyApp : public App {
 		}
   }
 
-  void onAnimate(double dt) {};
+  // void onAnimate(double dt) {};
 
-  void onDraw (Graphics &g) {
+  void onDraw (Graphics &g) override {
     g.clear();
-    g.blending(true);
-    g.blendTrans();
 
-    g.texture();
-    font.tex.bind();
-    g.draw(font_mesh);
-    font.tex.unbind();
-    g.meshColor();
-    for (int i=0;i<NUMBER_VOICES;i++) {
-      // g.color(discs[i].colors());
-      g.draw(discs[i]);
-    }
+    pSynth.render(g);
+
+    // g.blending(true);
+    // g.blendTrans();
+
+    // g.texture();
+    // font.tex.bind();
+    // g.draw(font_mesh);
+    // font.tex.unbind();
+    // g.meshColor();
+    // for (int i=0;i<NUMBER_VOICES;i++) {
+    //   // g.color(discs[i].colors());
+    //   g.draw(discs[i]);
+    // }
 
     
   }
@@ -142,6 +172,7 @@ int main() {
   float sr = 44100;
   app.audioDomain()->audioIO().gain(0.5);  // Global output gain.
   app.audioDomain()->configure(sr, AUDIO_BLOCK_SIZE, 4);
+  Domain::master().spu(app.audioIO().framesPerSecond());
 
 
   app.start();
