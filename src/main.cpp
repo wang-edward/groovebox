@@ -1,180 +1,134 @@
-#include <iostream>
-#include <vector>
-#include <array>
-#include <math.h>
+#include <random>
 
+
+#include "Gamma/Envelope.h"
+#include "Gamma/Oscillator.h"
 #include "Gamma/SamplePlayer.h"
 
-#include <random>
-// #include <Player.h>
-
 #include "al/app/al_App.hpp"
-// #include "al/sound/al_SoundFile.hpp"
-#include "al/graphics/al_Font.hpp"
-#include "al/graphics/al_Mesh.hpp"
-#include "al/sound/al_Speaker.hpp"
 #include "al/graphics/al_Shapes.hpp"
+#include "al/io/al_AudioIO.hpp"
 #include "al/scene/al_PolySynth.hpp"
-#include "al/scene/al_SynthSequencer.hpp"
-#include "al/ui/al_ControlGUI.hpp"
-#include "al/ui/al_Parameter.hpp"
 
 using namespace gam;
-
 using namespace al;
-using namespace std;
 
-#define AUDIO_BLOCK_SIZE 128
-#define NUMBER_VOICES 12
+#define NUMBER_VOICES 16
 
-typedef struct {
-  float *values;
-  int counter;
-  int numblocks;
-} meters_t;
 
+// Inherit from SynthVoice to determine what each voice should do
+// in the onProcess() audio and video callbacks.
+// Add functions to set voice parameters (per instance parameters)
+// Don't forget to define an onTriggerOn() function to reset envelopes or
+// values for each triggering and an onTriggerOff() function to
+// determine what the note should do when it is deactivated
 class sample_voice : public SynthVoice {
-  protected:
-    Mesh mMesh;
-  public:
-    sample_voice() {
-      addCube(mMesh, 1.0);
-    }
+ public:
+  sample_voice() {
+    // mAmpEnv.curve(0);  // make segments lines
+    // mAmpEnv.sustainPoint(2);
 
-    void onProcess(AudioIOData &io) override {
-      io.out(0)+=0.1;
-    }
-    void onProcess(Graphics &g) override {
-      g.pushMatrix();
-      g.blending(true);
-      g.blendTrans();
-      g.color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20);
+    addSphere(mMesh, 0.5, 30, 30);
+  }
 
-      g.draw(mMesh);
-      g.popMatrix();
+  // Note parameters
+  sample_voice& freq(float v) {
+    x = v/5;
+    // mOsc.freq(v);
+    return *this;
+  }
+
+  // Audio processing function
+  void onProcess(AudioIOData& io) override {
+    while (io()) {
+      float s = player();
+      io.out(0) += s;
+      io.out(1) += s;
     }
-    void onTriggerOn() override { cout<<"HELLO"<<endl; }
-    void onTriggerOff() override {cout <<"GOODBYE"<<endl; }
+  }
+
+  // Graphics processing function
+  void onProcess(Graphics& g) override {
+    g.pushMatrix();
+    g.blending(true);
+    g.blendTrans();
+
+    g.translate(x,x,0);
+    g.color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20);
+    // g.translate(mOsc.freq() / 250 - 3, spatialEnv * 2 - 1, -8);
+    // g.color(spatialEnv, mOsc.freq() / 1000, spatialEnv, spatialEnv);
+    g.draw(mMesh);
+    g.popMatrix();
+  }
+
+  void onTriggerOn() override { std::cout<< "hello"<<std::endl;}
+
+  void onTriggerOff() override { std::cout<<"goodbye"<<std::endl; }
+
+ protected:
+  float x, y, z;
+  Mesh mMesh;
 };
 
+// We will use PolySynth to handle voice triggering and allocation
 struct MyApp : public App {
   PolySynth pSynth;
-  SamplePlayer<> samples[NUMBER_VOICES];
-  array<float, NUMBER_VOICES> mix_level {0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.4, 0.2, 0.2, 0.2};
-  array<Mesh, NUMBER_VOICES> discs;
+  SamplePlayer<> players[NUMBER_VOICES];
 
-  Font font;
-  Mesh font_mesh;
-
-
-  void onInit() override {
-    // navControl().active(false);
-    nav().pos(0,0,10);
-    samples[0].load("data/count_new.wav");
-    samples[1].load("data/beat.wav");
-    samples[2].load("data/kick.wav");
-    samples[3].load("data/clap.wav");
-    samples[4].load("data/perc.wav");
-
-    samples[5].load("data/intro.wav");
-    samples[6].load("data/first_half.wav");
-    samples[7].load("data/second_half.wav");
-    samples[8].load("data/follow_up.wav");
-  }
   void onCreate() override {
-      for (int i=0;i<NUMBER_VOICES;i++) {
-        addDisc(discs[i], 0.5, 30);
-        discs[i].color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20, 1.0);
-        discs[i].translate((i%4)-1.5,floor(i/4)-1,0);
-        samples[i].pos(samples[i].frames());
-      }
+    // Pre-allocate voice to avoid real-time allocation
+    pSynth.allocatePolyphony<sample_voice>(NUMBER_VOICES);
 
-      font.load("data/Roboto-Regular.ttf",28,1024);
-      font.alignCenter();
-      font.write(font_mesh, "hell font", 0.2f);
-
-      pSynth.allocatePolyphony<sample_voice>(16);
+    navControl().active(false);  // Disable navigation via keyboard, since we
+                                 // will be using keyboard for note triggering
+    nav().pos(0,0,10);
+    for (int i=0;i<16;i++) {
+      
     }
-  
-  void onSound(AudioIOData &io) override {
-    while(io()){
-
-      float s = 0;
-      for (int i=0;i<NUMBER_VOICES;i++) {
-        float data = samples[i].read(0);
-        samples[i].advance();
-        s += data * mix_level[i];
-      }
-			io.out(0) = io.out(1) = s;
-		}
   }
 
-  // void onAnimate(double dt) {};
+  void onSound(AudioIOData& io) override {
+    pSynth.render(io);  // Render audio
+  }
 
-  void onDraw (Graphics &g) override {
+  void onDraw(Graphics& g) override {
     g.clear();
-
     pSynth.render(g);
-
-    // g.blending(true);
-    // g.blendTrans();
-
-    // g.texture();
-    // font.tex.bind();
-    // g.draw(font_mesh);
-    // font.tex.unbind();
-    // g.meshColor();
-    // for (int i=0;i<NUMBER_VOICES;i++) {
-    //   // g.color(discs[i].colors());
-    //   g.draw(discs[i]);
-    // }
-
-    
   }
 
-  bool onKeyDown(Keyboard const &k) override {
+  bool onKeyDown(Keyboard const& k) override {
 
-    int key_pressed = asciiToIndex(k.key());
-    key_pressed -= 30;
-    key_pressed = abs(key_pressed) % 12;
+    int key = asciiToIndex(k.key());
 
-    discs[key_pressed].colors().pop_back();
-    discs[key_pressed].color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20);
-    samples[key_pressed].reset();
+    key = key % NUMBER_VOICES;
 
-    std::cout<<key_pressed<<endl;
+      // float frequency = ::pow(2., (midiNote - 69.) / 12.) * 440.;
+      sample_voice* voice = pSynth.getVoice<sample_voice>();
+      voice->freq(key);
+      pSynth.triggerOn(voice, 0, key);
+    
     return true;
   }
 
-  // Whenever a key is released this function is called
   bool onKeyUp(Keyboard const& k) override {
-    int midiNote = asciiToMIDI(k.key());
-    if (midiNote > 0) {
-    }
+    int key = asciiToIndex(k.key());
+
+    key = key % NUMBER_VOICES;
+      pSynth.triggerOff(key);
+    
     return true;
   }
-    
 };
 
 int main() {
-  std::vector<std::string> filenames;
-  filenames.push_back("data/count_new.wav");
-  filenames.push_back("data/count.wav");
-  filenames.push_back("data/count.wav");
-  filenames.push_back("data/count.wav");
-
+  // Create app instance
   MyApp app;
 
-  // Mesh test;
-  // addCube(test, 1.0);
-  // test.translate(0,0,2);
+  // Start audio
+  app.configureAudio(44100., 256, 2, 0);
 
-  float sr = 44100;
-  app.audioDomain()->audioIO().gain(0.5);  // Global output gain.
-  app.audioDomain()->configure(sr, AUDIO_BLOCK_SIZE, 4);
+  // Set up sampling rate for Gamma objects
   Domain::master().spu(app.audioIO().framesPerSecond());
 
-
   app.start();
-  return 0;
 }
