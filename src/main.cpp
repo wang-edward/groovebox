@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <filesystem>
+#include <string>
 
 #include "Gamma/SamplePlayer.h"
 #include "Gamma/Analysis.h"
@@ -17,6 +19,8 @@
 #include "al/scene/al_SynthSequencer.hpp"
 #include "al/ui/al_ControlGUI.hpp"
 #include "al/ui/al_Parameter.hpp"
+// #include "al/ui/al_FileSelector.hpp"
+
 
 using namespace gam;
 
@@ -24,7 +28,8 @@ using namespace al;
 using namespace std;
 
 #define AUDIO_BLOCK_SIZE 128
-#define NUMBER_VOICES 5
+
+enum PLUGIN {PLUGIN_SAMPLER, PLUGIN_SYNTH};
 
 typedef struct {
   float *values;
@@ -33,51 +38,40 @@ typedef struct {
 } meters_t;
 
 #include "sample.hpp"
+#include "mpc.hpp"
 
 struct MyApp : public App {
-  sample voices[NUMBER_VOICES];
+  PLUGIN CURRENT_PLUGIN;
+  sample test;
+  mpc sampler;
+
   void onInit() override {
-    
+    sampler.init();
   }
   void onCreate() override {
-    sample test("data/beat.wav", 0.2);
-    sample *new_test = new sample("data/beat.wav", 0.2);
-    // voices[0] = *new_test;
-
+    navControl().active(false);
+    nav().pos(0,0,10);
   }
   
   void onSound(AudioIOData &io) override {
     while(io()){
-      float s = 0;
-      for (int i=0;i<NUMBER_VOICES;i++) {
-      }
+      float s = sampler.output();
 			io.out(0) = io.out(1) = s;
 		}
   }
 
-  bool onKeyDown(Keyboard const &k) override {
-    std::cout<<"start"<<endl;
+  void onDraw (Graphics &g) override {
+    sampler.draw(g);
+  }
 
+  bool onKeyDown(Keyboard const &k) override {
 
     int key_pressed = asciiToIndex(k.key());
-    switch(key_pressed) {
-      case 30:
-        // player1.reset();
-        break;
-      case 31:
-        // player2.reset();
-        break;
-      case 32:
-        // player_kick.reset();
-        break;
-      case 33:
-        // player_clap.reset();
-        break;
-      case 34:
-        // player_perc.reset();
-        break; 
-    }
-    std::cout<<"end"<<endl;
+    key_pressed = key_pressed % 16;
+    
+    sampler.key_down(key_pressed);
+
+    std::cout<<key_pressed<<endl;
     return true;
   }
 
@@ -94,6 +88,7 @@ int main() {
   app.audioDomain()->audioIO().gain(0.5);  // Global output gain.
   app.audioDomain()->configure(sr, AUDIO_BLOCK_SIZE, 4);
 
+  // string path = std::__fs::filesystem::get_current_dir_name();
 
   app.start();
   return 0;

@@ -16,7 +16,7 @@ message("arm64Supported=${arm64Supported}")
 set(APP_NAME app)
 
 # path to main source file
-add_executable(${APP_NAME} src/main.cpp)
+add_executable(${APP_NAME} src/main.cpp src/mpc.cpp src/sample.cpp)
 
 # add allolib as a subdirectory to the project
 add_subdirectory(allolib)
