@@ -44,7 +44,7 @@ typedef struct {
 #include "mpc.hpp"
 
 struct MyApp : public App {
-  PLUGIN CURRENT_PLUGIN;
+  PLUGIN CURRENT_PLUGIN = PLUGIN_SAMPLER;
   sample test;
   mpc sampler;
 
@@ -64,17 +64,25 @@ struct MyApp : public App {
   }
 
   void onDraw (Graphics &g) override {
-    sampler.draw(g);
+    g.clear();
+    switch (CURRENT_PLUGIN) {
+      case PLUGIN_SAMPLER:
+        sampler.draw(g);
+        break;
+    }
+    
   }
 
   bool onKeyDown(Keyboard const &k) override {
-
     int key_pressed = asciiToIndex(k.key());
-    key_pressed = key_pressed % 16;
-    
-    sampler.key_down(key_pressed);
 
-    std::cout<<key_pressed<<endl;
+    switch (CURRENT_PLUGIN) {
+      case PLUGIN_SAMPLER:
+        key_pressed = key_pressed % 16;
+        sampler.key_down(key_pressed);
+        std::cout<<key_pressed<<endl;
+        break;
+    }
     return true;
   }
 

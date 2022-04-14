@@ -3,7 +3,14 @@
 void mpc:: init() {
     init_files();
     position_discs();
-    color_discs();
+    init_font();
+}
+
+void mpc:: init_font() {
+    font.load("data/Roboto-Regular.ttf", 28, 1024);
+    font.alignCenter();
+
+    font.write(text, "EHLELLELASDH", 0.2f);
 }
 
 void mpc:: init_files() {
@@ -26,18 +33,25 @@ void mpc:: position_discs() {
     }
 }
 
-void mpc:: color_discs() {
-
-    for (int i=0;i<NUMBER_VOICES;i++) {
-        samples[i].disc.color((rand()%100)/20,(rand()%100)/20,(rand()%100)/20);
-    }
-}
-
 void mpc:: draw(al::Graphics &g) {
+    g.clear();
+
     g.meshColor();
     for (int i=0;i<NUMBER_VOICES;i++) {
         g.draw(samples[i].disc);
     }
+    
+    draw_gui(g);
+}
+
+void mpc:: draw_gui(al::Graphics &g) {
+    g.blending(true);
+    g.blendTrans();
+    g.texture();
+    font.tex.bind();
+    g.draw(text);
+    font.tex.unbind();
+    g.blending(false);
 }
 
 float mpc:: output() {
@@ -50,5 +64,5 @@ float mpc:: output() {
 }
 
 void mpc:: key_down(int key) {
-    samples[key].reset();
+    samples[key].trigger_on();
 }

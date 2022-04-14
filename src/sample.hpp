@@ -2,13 +2,16 @@
 #define SAMPLE_HPP
 
 #include "Gamma/SamplePlayer.h"
+#include "Gamma/Envelope.h"
 #include "al/graphics/al_Shapes.hpp"
 #include <iostream>
+#include <random>
 
 class sample {
   public:
     const char* path;
     gam::SamplePlayer<> player;
+    gam::Env<3> amp_envelope;
     float gain;
     al::Mesh disc;
 
@@ -39,7 +42,8 @@ class sample {
     void init(const char* _path, float _gain);
     void load_path(const char* _path);
     void update_gain(float _gain);
-    void reset();
+    void update_envelope(float a, float d, float s, float r);
+    void trigger_on();
     float output();
 };
 
