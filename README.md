@@ -1,24 +1,27 @@
-# allotemplate
-Template for creating applications using allolib. This template is suitable for large projects wil multiple files and dependencies where you need more control. If you are prototyping single files or want to explore the allolib examples, use the [allolib_playground repo](https://github.com/AlloSphere-Research-Group/allolib_playground).
-
-Developed by:
-
-AlloSphere Research Group
-
-University of California, Santa Barbara
-
 # Installation
 
-Allotemplate currently requires:
+Box currently requires:
  * bash shell
  * git
  * cmake version 3.0 or higher
 
+## MacOS dependencies
+Install xcode command line tools (if it doesn't work try install full xcode):
+
+    xcode-select --install
+
+Install homebrew ([brew.sh](https://brew.sh)), then:
+
+    brew install git git-lfs cmake libsndfile
+    
+## Ubuntu / Debian dependencies
+    sudo apt install build-essential git git-lfs cmake libsndfile1-dev libassimp-dev libasound-dev libxrandr-dev libopengl-dev libxinerama-dev libxcursor-dev libxi-dev
+
 ## Creating a new project based on allotemplate
 On a bash shell:
 
-    git clone https://github.com/AlloSphere-Research-Group/allotemplate.git <project folder name>
-    cd <project folder name>
+    git clone https://github.com/wang-edward/box.git
+    cd box
     ./init.sh
 
 This will prepare the project as a fresh git repository and will add allolib and al_ext as submodules.
