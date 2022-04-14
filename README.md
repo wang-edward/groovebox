@@ -16,6 +16,8 @@ Install homebrew ([brew.sh](https://brew.sh)), then:
     
 ## Ubuntu / Debian dependencies
     sudo apt install build-essential git git-lfs cmake libsndfile1-dev libassimp-dev libasound-dev libxrandr-dev libopengl-dev libxinerama-dev libxcursor-dev libxi-dev
+    
+Note: requires gcc >= 7
 
 ## Initialization
 On a bash shell:
