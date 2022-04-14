@@ -17,7 +17,7 @@ Install homebrew ([brew.sh](https://brew.sh)), then:
 ## Ubuntu / Debian dependencies
     sudo apt install build-essential git git-lfs cmake libsndfile1-dev libassimp-dev libasound-dev libxrandr-dev libopengl-dev libxinerama-dev libxcursor-dev libxi-dev
 
-## Creating a new project based on allotemplate
+## Initialization
 On a bash shell:
 
     git clone https://github.com/wang-edward/box.git
