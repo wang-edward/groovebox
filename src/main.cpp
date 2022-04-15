@@ -91,8 +91,9 @@ struct MyApp : public al::App {
   bool onKeyDown(al::Keyboard const &k) override {
 
     int key_pressed = al::asciiToIndex(k.key());
+    std::cout<<key_pressed<<std::endl;
 
-    if (key_pressed == 30) {
+    if (key_pressed == 0) {
       if (CURRENT_PLUGIN == PLUGIN_SAMPLER) {
         CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
       } else {
@@ -103,9 +104,11 @@ struct MyApp : public al::App {
 
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
-        key_pressed = key_pressed % mpc::NUMBER_SAMPLES;
-        sampler.key_down(key_pressed);
-
+        
+        if (key_pressed>=20 && key_pressed<=39) {
+          key_pressed = key_pressed % mpc::NUMBER_SAMPLES;
+          sampler.key_down(key_pressed);
+        }
         break;
       case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
         int midiNote = al::asciiToMIDI(k.key());
