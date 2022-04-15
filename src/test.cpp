@@ -1,4 +1,4 @@
-#include "test.hpp"
+#include "SineEnv.hpp"
 
 struct MyApp : public App {
   PolySynth pSynth;

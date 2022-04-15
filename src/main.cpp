@@ -45,8 +45,8 @@ typedef struct {
 #include "SineEnv.hpp"
 
 struct MyApp : public al::App {
-  // PLUGIN CURRENT_PLUGIN = PLUGIN_SAMPLER;
-  PLUGIN CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
+  PLUGIN CURRENT_PLUGIN = PLUGIN_SAMPLER;
+  // PLUGIN CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
 
   sample test;
   mpc sampler;
@@ -57,13 +57,13 @@ struct MyApp : public al::App {
     sampler.init();
   }
   void onCreate() override {
+    pSynth.allocatePolyphony<SineEnv>(16);
     navControl().active(false);
     nav().pos(0,0,10);
-
-    pSynth.allocatePolyphony<SineEnv>(8);
   }
   
   void onSound(al::AudioIOData &io) override {
+    // pSynth.render(io);  
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
           while(io()){
@@ -78,6 +78,7 @@ struct MyApp : public al::App {
 
   void onDraw (al::Graphics &g) override {
     g.clear();
+    // pSynth.render(g);
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
         sampler.draw(g);
@@ -89,6 +90,15 @@ struct MyApp : public al::App {
   }
 
   bool onKeyDown(al::Keyboard const &k) override {
+
+    // int midiNote = asciiToMIDI(k.key());
+    // if (midiNote > 0) {
+    //   float frequency = ::pow(2., (midiNote - 69.) / 12.) * 440.;
+    //   SineEnv* voice = pSynth.getVoice<SineEnv>();
+    //   voice->freq(frequency);
+    //   pSynth.triggerOn(voice, 0, midiNote);
+    // }
+
     int key_pressed = al::asciiToIndex(k.key());
 
     switch (CURRENT_PLUGIN) {
@@ -114,6 +124,10 @@ struct MyApp : public al::App {
 
   // Whenever a key is released this function is called
   bool onKeyUp(al::Keyboard const& k) override {
+    // int midiNote = asciiToMIDI(k.key());
+    // if (midiNote > 0) {
+    //   pSynth.triggerOff(midiNote);
+    // }
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):
       // TODO: ADD SAMPLER KEYUP
@@ -123,6 +137,7 @@ struct MyApp : public al::App {
         if (midiNote > 0) pSynth.triggerOff(midiNote);
       break;
     }
+    return true;
   }
     
 };
@@ -139,8 +154,7 @@ int main() {
   app.configureAudio(44100., 256, 2, 0);
 
   // Set up sampling rate for Gamma objects
-  al::GammaAudioDomain::master().spu(app.audioIO().framesPerSecond());
+  Domain::master().spu(app.audioIO().framesPerSecond());
 
   app.start();
-  return 0;
 }
