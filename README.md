@@ -19,6 +19,8 @@ Install homebrew ([brew.sh](https://brew.sh)), then:
     
 Note: requires gcc >= 7
 
+Also, make sure to comment out line 2 in CmakeLists.txt (still might not work though)
+
 ## Initialization
 On a bash shell:
 
