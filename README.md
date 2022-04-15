@@ -19,6 +19,12 @@ Install homebrew ([brew.sh](https://brew.sh)), then:
     
 Note: requires gcc >= 7
 
+Also, make sure to comment out line 2 in CMakeLists.txt (still might not work though)   
+      
+    box/CMakeLists.txt
+      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -target x86_64-apple-darwin20.3.0") # -target is for m1 mac only
+      # SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread") # USE THIS FOR UBUNTU/DEBIAN
+
 ## Initialization
 On a bash shell:
 
