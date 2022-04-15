@@ -9,13 +9,14 @@
 class mpc  {
 
   public:
-    const int NUMBER_VOICES = 12;
-    sample samples[16];
+    static const int NUMBER_SAMPLES = 12;
+    sample samples[NUMBER_SAMPLES];
     al::Font font;
     al::Mesh text;
     void init();
     void init_font();
     void init_files();
+    void color_discs();
     void position_discs();
     void draw(al::Graphics &g);
     void draw_gui(al::Graphics &g);

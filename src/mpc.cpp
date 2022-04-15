@@ -17,7 +17,7 @@ void mpc:: init_files() {
     std::string path = "./data";
     int i=0;
     for (const auto& file : std::__fs::filesystem::directory_iterator(path)) {
-        if (i>=16) {
+        if (i>=NUMBER_SAMPLES) {
             break;
         }
         std::string s = file.path();
@@ -27,8 +27,14 @@ void mpc:: init_files() {
     }
 }
 
+void mpc:: color_discs() {
+    for (int i=0;i<NUMBER_SAMPLES;i++) {
+        samples[i].reset_color();
+    }
+}
+
 void mpc:: position_discs() {
-    for (int i=0;i<NUMBER_VOICES;i++) {
+    for (int i=0;i<NUMBER_SAMPLES;i++) {
         samples[i].disc.translate((i%4)-1.5,floor(i/4)-1,1);
     }
 }
@@ -37,7 +43,7 @@ void mpc:: draw(al::Graphics &g) {
     g.clear();
 
     g.meshColor();
-    for (int i=0;i<NUMBER_VOICES;i++) {
+    for (int i=0;i<NUMBER_SAMPLES;i++) {
         g.draw(samples[i].disc);
     }
     
@@ -56,7 +62,7 @@ void mpc:: draw_gui(al::Graphics &g) {
 
 float mpc:: output() {
     float s = 0;
-    for (int i=0;i<NUMBER_VOICES;i++) {
+    for (int i=0;i<NUMBER_SAMPLES;i++) {
         s += samples[i].output();
         // std::cout<<sampler.samles[i]
       }

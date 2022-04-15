@@ -43,6 +43,7 @@ class sample {
     void load_path(const char* _path);
     void update_gain(float _gain);
     void update_envelope(float a, float d, float s, float r);
+    void reset_color();
     void trigger_on();
     float output();
 };

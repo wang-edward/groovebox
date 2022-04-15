@@ -4,7 +4,7 @@
 sample:: sample() {
     gain = 0.2;
     addDisc(disc, 0.5, 30);
-    disc.color((std::rand()%100)/20,(std::rand()%100)/20,(std::rand()%100)/20);
+    reset_color();
 }
 
 void sample:: init(const char* _path, float _gain) {
@@ -46,18 +46,18 @@ void sample:: update_envelope(float a, float d, float s, float r) {
     
 }
 
+void sample:: reset_color() {
+    // if (!disc.colors().empty()) {
+        disc.colors().clear();
+    // }
+    // disc.colors().pop_back();
+    disc.color((std::rand()%100)/20,(std::rand()%100)/20,(std::rand()%100)/20);
+}
+
 void sample:: trigger_on() {
     player.reset();
 
-
-    std::cout<<"ONE"<<disc.colors().size()<<std::endl;
-    disc.colors().pop_back();
-
-
-    std::cout<<"TWO"<<disc.colors().size()<<std::endl;
-    disc.color((std::rand()%100)/20,(std::rand()%100)/20,(std::rand()%100)/20);
-
-    std::cout<<"Three"<<disc.colors().size()<<std::endl;
+    reset_color();
 }
 
 float sample:: output() {

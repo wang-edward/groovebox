@@ -30,7 +30,7 @@
 // using namespace al;
 // using namespace std;
 
-#define AUDIO_BLOCK_SIZE 512
+#define AUDIO_BLOCK_SIZE 128
 
 enum PLUGIN {PLUGIN_SAMPLER, PLUGIN_SUBTRACTIVE};
 
@@ -54,16 +54,16 @@ struct MyApp : public al::App {
   al::PolySynth pSynth;
 
   void onInit() override {
-    sampler.init();
+    
   }
   void onCreate() override {
+    sampler.init();
     pSynth.allocatePolyphony<SineEnv>(16);
     navControl().active(false);
     nav().pos(0,0,10);
   }
   
   void onSound(al::AudioIOData &io) override {
-    // pSynth.render(io);  
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
           while(io()){
@@ -78,7 +78,6 @@ struct MyApp : public al::App {
 
   void onDraw (al::Graphics &g) override {
     g.clear();
-    // pSynth.render(g);
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
         sampler.draw(g);
@@ -91,19 +90,20 @@ struct MyApp : public al::App {
 
   bool onKeyDown(al::Keyboard const &k) override {
 
-    // int midiNote = asciiToMIDI(k.key());
-    // if (midiNote > 0) {
-    //   float frequency = ::pow(2., (midiNote - 69.) / 12.) * 440.;
-    //   SineEnv* voice = pSynth.getVoice<SineEnv>();
-    //   voice->freq(frequency);
-    //   pSynth.triggerOn(voice, 0, midiNote);
-    // }
-
     int key_pressed = al::asciiToIndex(k.key());
+
+    if (key_pressed == 30) {
+      if (CURRENT_PLUGIN == PLUGIN_SAMPLER) {
+        CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
+      } else {
+        CURRENT_PLUGIN = PLUGIN_SAMPLER;
+      }
+      
+    }
 
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
-        key_pressed = key_pressed % 16;
+        key_pressed = key_pressed % mpc::NUMBER_SAMPLES;
         sampler.key_down(key_pressed);
 
         break;
@@ -124,10 +124,6 @@ struct MyApp : public al::App {
 
   // Whenever a key is released this function is called
   bool onKeyUp(al::Keyboard const& k) override {
-    // int midiNote = asciiToMIDI(k.key());
-    // if (midiNote > 0) {
-    //   pSynth.triggerOff(midiNote);
-    // }
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):
       // TODO: ADD SAMPLER KEYUP

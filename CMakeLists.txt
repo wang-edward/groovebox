@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -target x86_64-apple-darwin20.3.0") # -target is for m1 mac only
+# SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread") # USE THIS FOR UBUNTU/DEBIAN
+
 project(Allotemplate)
 
 include(CheckCCompilerFlag)
@@ -17,8 +19,6 @@ set(APP_NAME app)
 
 # path to main source file
 add_executable(${APP_NAME} src/main.cpp src/mpc.cpp src/sample.cpp src/SineEnv.cpp)
-# add_executable(${APP_NAME} src/rtPolySynth.cpp)
-#  add_executable(${APP_NAME} src/test.cpp src/other.cpp)
 
 
 
