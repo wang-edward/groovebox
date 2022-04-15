@@ -25,14 +25,14 @@
 // #include "al/ui/al_FileSelector.hpp"
 
 
-using namespace gam;
+// using namespace gam;
 
-using namespace al;
-using namespace std;
+// using namespace al;
+// using namespace std;
 
-#define AUDIO_BLOCK_SIZE 128
+#define AUDIO_BLOCK_SIZE 512
 
-enum PLUGIN {PLUGIN_SAMPLER, PLUGIN_SYNTH};
+enum PLUGIN {PLUGIN_SAMPLER, PLUGIN_SUBTRACTIVE};
 
 typedef struct {
   float *values;
@@ -42,11 +42,16 @@ typedef struct {
 
 #include "sample.hpp"
 #include "mpc.hpp"
+#include "SineEnv.hpp"
 
-struct MyApp : public App {
-  PLUGIN CURRENT_PLUGIN = PLUGIN_SAMPLER;
+struct MyApp : public al::App {
+  // PLUGIN CURRENT_PLUGIN = PLUGIN_SAMPLER;
+  PLUGIN CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
+
   sample test;
   mpc sampler;
+
+  al::PolySynth pSynth;
 
   void onInit() override {
     sampler.init();
@@ -54,40 +59,70 @@ struct MyApp : public App {
   void onCreate() override {
     navControl().active(false);
     nav().pos(0,0,10);
+
+    pSynth.allocatePolyphony<SineEnv>(8);
   }
   
-  void onSound(AudioIOData &io) override {
-    while(io()){
-      float s = sampler.output();
-			io.out(0) = io.out(1) = s;
-		}
-  }
-
-  void onDraw (Graphics &g) override {
-    g.clear();
+  void onSound(al::AudioIOData &io) override {
     switch (CURRENT_PLUGIN) {
-      case PLUGIN_SAMPLER:
-        sampler.draw(g);
+      case (PLUGIN_SAMPLER):      // SAMPLER
+          while(io()){
+            io.out(0) = io.out(1) = sampler.output();
+          }
+        break;
+      case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
+        pSynth.render(io);
         break;
     }
-    
   }
 
-  bool onKeyDown(Keyboard const &k) override {
-    int key_pressed = asciiToIndex(k.key());
+  void onDraw (al::Graphics &g) override {
+    g.clear();
+    switch (CURRENT_PLUGIN) {
+      case (PLUGIN_SAMPLER):      // SAMPLER
+        sampler.draw(g);
+        break;
+      case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
+        pSynth.render(g);
+        break;
+    }
+  }
+
+  bool onKeyDown(al::Keyboard const &k) override {
+    int key_pressed = al::asciiToIndex(k.key());
 
     switch (CURRENT_PLUGIN) {
-      case PLUGIN_SAMPLER:
+      case (PLUGIN_SAMPLER):      // SAMPLER
         key_pressed = key_pressed % 16;
         sampler.key_down(key_pressed);
-        std::cout<<key_pressed<<endl;
+
+        break;
+      case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
+        int midiNote = al::asciiToMIDI(k.key());
+        if (midiNote > 0) {
+          float frequency = ::pow(2., (midiNote - 69.) / 12.) * 440.;
+          SineEnv* voice = pSynth.getVoice<SineEnv>();
+          std::cout<<frequency<<std::endl;
+          voice->freq(frequency); 
+          pSynth.triggerOn(voice, 0, midiNote);
+        }
+
         break;
     }
     return true;
   }
 
   // Whenever a key is released this function is called
-  bool onKeyUp(Keyboard const& k) override {
+  bool onKeyUp(al::Keyboard const& k) override {
+    switch (CURRENT_PLUGIN) {
+      case (PLUGIN_SAMPLER):
+      // TODO: ADD SAMPLER KEYUP
+      break;
+      case (PLUGIN_SUBTRACTIVE):
+        int midiNote = al::asciiToMIDI(k.key());
+        if (midiNote > 0) pSynth.triggerOff(midiNote);
+      break;
+    }
   }
     
 };
@@ -95,15 +130,16 @@ struct MyApp : public App {
 int main() {
   MyApp app;
 
-  // Mesh test;
-  // addCube(test, 1.0);
-  // test.translate(0,0,2);
 
-  float sr = 44100;
-  app.audioDomain()->audioIO().gain(0.5);  // Global output gain.
-  app.audioDomain()->configure(sr, AUDIO_BLOCK_SIZE, 4);
+  // float sr = 44100;
+  // app.audioDomain()->audioIO().gain(0.5);  // Global output gain.
+  // app.audioDomain()->configure(sr, AUDIO_BLOCK_SIZE, 4);
 
-  // string path = std::__fs::filesystem::get_current_dir_name();
+  // Start audio
+  app.configureAudio(44100., 256, 2, 0);
+
+  // Set up sampling rate for Gamma objects
+  al::GammaAudioDomain::master().spu(app.audioIO().framesPerSecond());
 
   app.start();
   return 0;
