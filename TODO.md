@@ -1,0 +1,1 @@
+* get rid of const char* path in sample.hpp (path shouldnt be constant, also no need to store it)

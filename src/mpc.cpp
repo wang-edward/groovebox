@@ -60,13 +60,14 @@ void mpc:: draw_gui(al::Graphics &g) {
     g.blending(false);
 }
 
-float mpc:: output() {
-    float s = 0;
-    for (int i=0;i<NUMBER_SAMPLES;i++) {
-        s += samples[i].output();
-        // std::cout<<sampler.samles[i]
-      }
-    return s;
+void mpc:: render(al::AudioIOData &io) {
+    while(io()){
+        float s = 0;
+        for (int i=0;i<NUMBER_SAMPLES;i++) {
+            s += samples[i].output();
+        }
+        io.out(0) = io.out(1) = s;
+    }
 }
 
 void mpc:: key_down(int key) {

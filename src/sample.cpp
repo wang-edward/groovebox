@@ -48,7 +48,9 @@ void sample:: update_envelope(float a, float d, float s, float r) {
 
 void sample:: reset_color() {
     // if (!disc.colors().empty()) {
-        disc.colors().clear();
+        for (int i=0;i<disc.colors().size();i++) {
+            disc.colors().pop_back();
+        }   
     // }
     // disc.colors().pop_back();
     disc.color((std::rand()%100)/20,(std::rand()%100)/20,(std::rand()%100)/20);

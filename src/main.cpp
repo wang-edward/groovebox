@@ -47,8 +47,6 @@ typedef struct {
 struct MyApp : public al::App {
   PLUGIN CURRENT_PLUGIN = PLUGIN_SAMPLER;
   // PLUGIN CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
-
-  sample test;
   mpc sampler;
 
   al::PolySynth pSynth;
@@ -66,9 +64,9 @@ struct MyApp : public al::App {
   void onSound(al::AudioIOData &io) override {
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
-          while(io()){
-            io.out(0) = io.out(1) = sampler.output();
-          }
+          // while(io()){
+          //   io.out(0) = io.out(1) = sampler.output();
+          // }
         break;
       case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
         pSynth.render(io);
@@ -98,6 +96,10 @@ struct MyApp : public al::App {
         CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
       } else {
         CURRENT_PLUGIN = PLUGIN_SAMPLER;
+
+        for (int i=0;i<mpc::NUMBER_SAMPLES;i++) {
+          sampler.samples[i].disc.colors().clear();
+        }
       }
       
     }

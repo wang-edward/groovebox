@@ -5,6 +5,7 @@
 #include <filesystem>
 #include "al/graphics/al_Graphics.hpp"
 #include "al/graphics/al_Font.hpp"
+#include "al/io/al_AudioIO.hpp"
 
 class mpc  {
 
@@ -20,7 +21,7 @@ class mpc  {
     void position_discs();
     void draw(al::Graphics &g);
     void draw_gui(al::Graphics &g);
-    float output();
+    void render(al::AudioIOData &io);
     void key_down(int key);
 };
 
