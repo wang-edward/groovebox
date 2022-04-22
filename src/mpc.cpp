@@ -7,20 +7,24 @@ void mpc:: init() {
 }
 
 void mpc:: init_font() {
-    font.load("data/Roboto-Regular.ttf", 28, 1024);
+    font.load("data/font/Roboto-Regular.ttf", 28, 1024);
     font.alignCenter();
 
     font.write(text, "EHLELLELASDH", 0.2f);
 }
 
 void mpc:: init_files() {
-    std::string path = "./data";
+    std::string path = "./data/samples";
     int i=0;
     for (const auto& file : std::__fs::filesystem::directory_iterator(path)) {
         if (i>=NUMBER_SAMPLES) {
             break;
         }
         std::string s = file.path();
+        // if (s.substr(s.length()-3, s.length()) != ("wav")) {
+        //     // i--;
+        //     std::cout<<s;
+        // }
         samples[i].load_path(s.c_str()); //convert string to const char*
         std::cout<< s.substr(2,s.length())<<std::endl; //skip "./" in file path
         i++;

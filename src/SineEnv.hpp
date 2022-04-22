@@ -36,7 +36,9 @@ class SineEnv : public SynthVoice {
   float mAmp{0.2f};
   float mDur{1.5f};
   Sine<> mOsc;
-  Env<3> mAmpEnv{0.f, 0.5f, 1.f, 1.0f, 1.f, 2.0f, 0.f};
+  // Env<3> mAmpEnv{0.f, 0.5f, 1.f, 1.0f, 1.f, 2.0f, 0.f};
+  Env<3> mAmpEnv{0.f, 0.2f, 1.f, 1.0f, 1.f, 0.5f, 0.f};
+
 
   Mesh mMesh;
 };

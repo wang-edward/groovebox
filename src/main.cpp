@@ -13,7 +13,6 @@
 // #include <Player.h>
 
 #include "al/app/al_App.hpp"
-// #include "al/sound/al_SoundFile.hpp"
 #include "al/graphics/al_Font.hpp"
 #include "al/graphics/al_Mesh.hpp"
 #include "al/sound/al_Speaker.hpp"
@@ -22,13 +21,7 @@
 #include "al/scene/al_SynthSequencer.hpp"
 #include "al/ui/al_ControlGUI.hpp"
 #include "al/ui/al_Parameter.hpp"
-// #include "al/ui/al_FileSelector.hpp"
 
-
-// using namespace gam;
-
-// using namespace al;
-// using namespace std;
 
 #define AUDIO_BLOCK_SIZE 128
 
@@ -46,16 +39,15 @@ typedef struct {
 
 struct MyApp : public al::App {
   PLUGIN CURRENT_PLUGIN = PLUGIN_SAMPLER;
-  // PLUGIN CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
   mpc sampler;
-
   al::PolySynth pSynth;
 
   void onInit() override {
-    
+    //TODO better config
   }
   void onCreate() override {
     sampler.init();
+    sampler.samples[0].gain = 0.1; //TODO: temporary mix fix
     pSynth.allocatePolyphony<SineEnv>(16);
     navControl().active(false);
     nav().pos(0,0,10);
@@ -64,9 +56,7 @@ struct MyApp : public al::App {
   void onSound(al::AudioIOData &io) override {
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
-          // while(io()){
-          //   io.out(0) = io.out(1) = sampler.output();
-          // }
+          sampler.render(io);
         break;
       case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
         pSynth.render(io);
@@ -94,12 +84,9 @@ struct MyApp : public al::App {
     if (key_pressed == 0) {
       if (CURRENT_PLUGIN == PLUGIN_SAMPLER) {
         CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
+
       } else {
         CURRENT_PLUGIN = PLUGIN_SAMPLER;
-
-        for (int i=0;i<mpc::NUMBER_SAMPLES;i++) {
-          sampler.samples[i].disc.colors().clear();
-        }
       }
       
     }
@@ -107,8 +94,8 @@ struct MyApp : public al::App {
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
         
-        if (key_pressed>=20 && key_pressed<=39) {
-          key_pressed = key_pressed % mpc::NUMBER_SAMPLES;
+        if (key_pressed>=20 && key_pressed<mpc::NUMBER_SAMPLES +20) {
+          key_pressed = key_pressed - 20;
           sampler.key_down(key_pressed);
         }
         break;
@@ -152,7 +139,7 @@ int main() {
   // app.audioDomain()->configure(sr, AUDIO_BLOCK_SIZE, 4);
 
   // Start audio
-  app.configureAudio(44100., 256, 2, 0);
+  app.configureAudio(44100., AUDIO_BLOCK_SIZE, 2, 0);
 
   // Set up sampling rate for Gamma objects
   Domain::master().spu(app.audioIO().framesPerSecond());
