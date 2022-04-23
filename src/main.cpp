@@ -79,17 +79,9 @@ struct MyApp : public al::App {
   bool onKeyDown(al::Keyboard const &k) override {
 
     int key_pressed = al::asciiToIndex(k.key());
-    std::cout<<key_pressed<<std::endl;
+    std::cout<<key_pressed<<std::endl; // DEBUG
 
-    if (key_pressed == 0) {
-      if (CURRENT_PLUGIN == PLUGIN_SAMPLER) {
-        CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
-
-      } else {
-        CURRENT_PLUGIN = PLUGIN_SAMPLER;
-      }
-      
-    }
+    swap_screens(key_pressed);
 
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
@@ -127,16 +119,22 @@ struct MyApp : public al::App {
     }
     return true;
   }
+
+  void swap_screens (int key_pressed) {
+    if (key_pressed == 0) {
+      if (CURRENT_PLUGIN == PLUGIN_SAMPLER) {
+        CURRENT_PLUGIN = PLUGIN_SUBTRACTIVE;
+
+      } else {
+        CURRENT_PLUGIN = PLUGIN_SAMPLER;
+      }
+    }
+  }
     
 };
 
 int main() {
   MyApp app;
-
-
-  // float sr = 44100;
-  // app.audioDomain()->audioIO().gain(0.5);  // Global output gain.
-  // app.audioDomain()->configure(sr, AUDIO_BLOCK_SIZE, 4);
 
   // Start audio
   app.configureAudio(44100., AUDIO_BLOCK_SIZE, 2, 0);
