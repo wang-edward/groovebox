@@ -1,6 +1,7 @@
 # About
 
-https://wang-edward.github.io/box-(OP-1-Clone)/
+{% include embed.html url="https://www.youtube.com/embed/9Ugzczsdl9c" %}
+Progress: https://wang-edward.github.io/box-(OP-1-Clone)/
 
 # Installation
 
