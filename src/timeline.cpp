@@ -3,6 +3,7 @@
 void timeline:: init() {
     current_position = 0;
     init_files();
+    screen.init(); //TODO remove
     // align_tracks();
 }
 
@@ -21,7 +22,7 @@ void timeline:: init_files() {
     }
 }
 
-void timeline:: render (al::AudioIOData &io) {
+void timeline:: render (al::AudioIOData& io) {
 
     if (playing == true) {
         while (io()) {
@@ -42,6 +43,10 @@ void timeline:: render (al::AudioIOData &io) {
         // current_position+=io.framesPerBuffer();
         std::cout<<current_position<<"\n"<<std::endl;
     }  
+}
+
+void timeline:: render (al::Graphics& g) {
+    screen.render(g);
 }
 
 void timeline:: align_tracks() {

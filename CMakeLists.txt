@@ -19,7 +19,7 @@ set(APP_NAME app)
 
 # path to main source file
 # add_executable(${APP_NAME} src/main.cpp src/mpc.cpp src/sample.cpp src/SineEnv.cpp)
-add_executable(${APP_NAME} src/test.cpp src/track.cpp src/timeline.cpp)
+add_executable(${APP_NAME} src/test.cpp src/track.cpp src/timeline.cpp src/gui.cpp)
 # add_executable(${APP_NAME} src/test.cpp)
 
 

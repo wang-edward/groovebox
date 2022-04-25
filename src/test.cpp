@@ -41,24 +41,26 @@ struct MyApp : public al::App {
     timeline tl;
   
   void onInit() override {
+    dimensions(960,640);
+
     tl.init();
     // tl.playing = true;
   }
   void onCreate() override {
-    navControl().active(false);
+    // navControl().active(false);
     nav().pos(0,0,10);
   }
   
-  void onSound(al::AudioIOData &io) override {
-    tl.render(io);
+  void onSound(al::AudioIOData& io) override {
+    // tl.render(io);
   }
 
-  void onDraw (al::Graphics &g) override {
+  void onDraw (al::Graphics& g) override {
     g.clear();
-    
+    tl.render(g);
   }
 
-  bool onKeyDown(al::Keyboard const &k) override {
+  bool onKeyDown(al::Keyboard const& k) override {
 
     int key_pressed = al::asciiToIndex(k.key());
     std::cout<<key_pressed<<std::endl;
