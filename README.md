@@ -1,6 +1,7 @@
 # About
 
-{% include embed.html url="https://www.youtube.com/embed/9Ugzczsdl9c" %}
+![doom_gif](https://user-images.githubusercontent.com/53409587/165104248-1447658f-bb47-44e4-80aa-21c08de183ec.gif)
+
 Progress: https://wang-edward.github.io/box-(OP-1-Clone)/
 
 # Installation
