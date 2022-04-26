@@ -42,22 +42,33 @@ struct MyApp : public al::App {
   
   void onInit() override {
     dimensions(960,640);
+    // dimensions(240,160);
+
+    updateDraw(tl.get_gui());
 
     tl.init();
     // tl.playing = true;
   }
   void onCreate() override {
     // navControl().active(false);
-    nav().pos(0,0,10);
+    // nav().pos(0,0,10);
   }
   
   void onSound(al::AudioIOData& io) override {
     // tl.render(io);
   }
 
+  void updateDraw(gui& target) {
+    target.update_scaling(width(), height());
+  }
+
   void onDraw (al::Graphics& g) override {
     g.clear();
+    // g.camera(al::Viewpoint::ORTHO_FOR_2D);  // Ortho [0:width] x [0:height]
+    g.camera(al::Viewpoint::ORTHO_FOR_2D);  // Ortho [0:width] x [0:height]
+
     tl.render(g);
+    // std::cout<<width()<<std::endl;
   }
 
   bool onKeyDown(al::Keyboard const& k) override {

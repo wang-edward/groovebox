@@ -11,7 +11,7 @@ class timeline {
         void render(al::Graphics& g);
         void align_tracks();
         void init();
-        
+        gui& get_gui();
 
     protected:
         static const int NUMBER_TRACKS = 1;

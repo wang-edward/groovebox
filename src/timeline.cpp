@@ -54,3 +54,7 @@ void timeline:: align_tracks() {
         tracks[i].align(current_position);
     }
 }
+
+gui& timeline:: get_gui() {
+    return screen;
+}
