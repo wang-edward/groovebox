@@ -56,14 +56,17 @@ void gui:: rand_color() {
 
     test[tempx][tempy].colors().clear();
 
-    test[tempx][tempy].color(temp);
+    //each mesh has 5 vertices?
+    for (int i=0;i<5;i++) {
+        test[tempx][tempy].color(temp);
+    }
 }
 
 void gui:: render (al::Graphics& g) {
     g.meshColor();  // use mesh's color
     // g.draw(grid);
 
-    for (int i=0;i<5;i++) {
+    for (int i=0;i<500;i++) {
         rand_color();
     }
 
