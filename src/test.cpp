@@ -24,6 +24,9 @@
 #include "al/ui/al_Parameter.hpp"
 // #include "al/ui/al_FileSelector.hpp"
 
+#include "al/graphics/al_Image.hpp"
+
+
 #include "track.hpp"
 #include "timeline.hpp"
 
@@ -39,19 +42,39 @@ typedef struct {
 struct MyApp : public al::App {
 
     timeline tl;
+    al::Texture texture;
+
+    int f_width, f_height;
   
   void onInit() override {
-    dimensions(960,640);
-    // dimensions(240,160);
+    // dimensions(960,640);
+    dimensions(240,160);
 
     updateDraw(tl.get_gui());
 
-    tl.init();
+    // tl.init();
     // tl.playing = true;
   }
   void onCreate() override {
     // navControl().active(false);
     // nav().pos(0,0,10);
+
+    const char* filename = "data/image/doom_midway1.png";
+
+    auto imageData = al::Image(filename);
+
+    if (imageData.array().size() == 0) {
+      std::cout << "failed to load image" << std::endl;
+    }
+    std::cout << "loaded image size: " << imageData.width() << ", "
+         << imageData.height() << std::endl;
+
+    texture.create2D(imageData.width(), imageData.height());
+    texture.submit(imageData.array().data(), GL_RGBA, GL_UNSIGNED_BYTE);
+
+    texture.filter(al::Texture::LINEAR);
+
+    f_width = imageData.width(); f_height = imageData.height();
   }
   
   void onSound(al::AudioIOData& io) override {
@@ -63,11 +86,23 @@ struct MyApp : public al::App {
   }
 
   void onDraw (al::Graphics& g) override {
-    g.clear();
-    // g.camera(al::Viewpoint::ORTHO_FOR_2D);  // Ortho [0:width] x [0:height]
+    // g.clear();
     g.camera(al::Viewpoint::ORTHO_FOR_2D);  // Ortho [0:width] x [0:height]
+    // g.camera(al::Viewpoint::IDENTITY);  // Ortho [0:width] x [0:height]
 
-    tl.render(g);
+    g.clear(0.2);
+
+    g.pushMatrix();
+
+    // Push the texture/quad back 5 units (away from the camera)
+    
+    // g.translate(0, 0, -5);
+
+    g.quad(texture, 100, 100, f_width, f_height);
+
+    g.popMatrix();
+
+    // tl.render(g);
     // std::cout<<width()<<std::endl;
   }
 
