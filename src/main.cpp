@@ -25,7 +25,7 @@
 
 #define AUDIO_BLOCK_SIZE 128
 
-enum PLUGIN {PLUGIN_SAMPLER, PLUGIN_SUBTRACTIVE};
+enum PLUGIN {PLUGIN_SAMPLER, PLUGIN_SUBTRACTIVE, PLUGIN_WAV_EDITOR};
 
 typedef struct {
   float *values;
@@ -36,21 +36,24 @@ typedef struct {
 #include "sample.hpp"
 #include "mpc.hpp"
 #include "SineEnv.hpp"
+#include "wav_editor.hpp"
 
 struct MyApp : public al::App {
   PLUGIN CURRENT_PLUGIN = PLUGIN_SAMPLER;
   mpc sampler;
+  wav_editor editor;
   al::PolySynth pSynth;
 
   void onInit() override {
     //TODO better config
   }
   void onCreate() override {
+    editor.init();
     sampler.init();
-    sampler.samples[0].gain = 0.1; //TODO: temporary mix fix
-    pSynth.allocatePolyphony<SineEnv>(16);
+    // sampler.samples[0].gain = 0.1; //TODO: temporary mix fix
+    // pSynth.allocatePolyphony<SineEnv>(16);
     navControl().active(false);
-    nav().pos(0,0,10);
+    // nav().pos(0,0,10);
   }
   
   void onSound(al::AudioIOData &io) override {
@@ -65,6 +68,7 @@ struct MyApp : public al::App {
   }
 
   void onDraw (al::Graphics &g) override {
+    g.camera(Viewpoint::UNIT_ORTHO);  
     g.clear();
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
@@ -72,6 +76,9 @@ struct MyApp : public al::App {
         break;
       case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
         pSynth.render(g);
+        break;
+      case (PLUGIN_WAV_EDITOR):
+        editor.render(g);
         break;
     }
   }

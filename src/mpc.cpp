@@ -7,7 +7,7 @@ void mpc:: init() {
 }
 
 void mpc:: init_font() {
-    font.load("data/font/Roboto-Regular.ttf", 28, 1024);
+    font.load("data/font/Minecraft.ttf", 100, 512);
     font.alignCenter();
 
     font.write(text, "EHLELLELASDH", 0.2f);
@@ -39,7 +39,7 @@ void mpc:: color_discs() {
 
 void mpc:: position_discs() {
     for (int i=0;i<NUMBER_SAMPLES;i++) {
-        samples[i].disc.translate((i%4)-1.5,floor(i/4)-1,1);
+        samples[i].disc.translate(((i%4)-1.5)/2,(floor(i/4)-1)/2,0);
     }
 }
 

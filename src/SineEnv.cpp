@@ -4,7 +4,7 @@ SineEnv:: SineEnv() {
     mAmpEnv.curve(0);  // make segments lines
     mAmpEnv.sustainPoint(2);
 
-    addSphere(mMesh, 0.5, 30, 30);
+    addSphere(mMesh, 0.25, 30, 30);
 }
 
 // Note parameters
@@ -29,7 +29,7 @@ void SineEnv:: onProcess(Graphics& g) {
     g.pushMatrix();
     g.blending(true);
     g.blendTrans();
-    g.translate(mOsc.freq() / 250 - 3, spatialEnv * 2 - 1, -8);
+    g.translate(mOsc.freq() / 500 - 1.25, spatialEnv - 0.5, 0);
     g.color(spatialEnv, mOsc.freq() / 1000, spatialEnv, spatialEnv);
     g.draw(mMesh);
     g.popMatrix();

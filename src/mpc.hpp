@@ -10,7 +10,7 @@
 class mpc  {
 
   public:
-    static const int NUMBER_SAMPLES = 7;
+    static const int NUMBER_SAMPLES = 12;
     sample samples[NUMBER_SAMPLES];
     al::Font font;
     al::Mesh text;

@@ -3,7 +3,7 @@
 //default constructor
 sample:: sample() {
     gain = 0.2;
-    addDisc(disc, 0.5, 30);
+    addDisc(disc, 0.25, 30);
     reset_color();
 }
 
