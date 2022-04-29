@@ -46,6 +46,7 @@ struct MyApp : public al::App {
 
   void onInit() override {
     //TODO better config
+    dimensions(960,640);
   }
   void onCreate() override {
     editor.init();
