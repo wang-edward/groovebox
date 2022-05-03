@@ -58,7 +58,7 @@ struct MyApp : public al::App {
     sampler.init();
     screen.init();
 
-    const char *filename = "data/image/tiny.png";
+    const char *filename = "data/image/doom_midway1.png";
 
     imageData = Image(filename);
 
@@ -76,8 +76,6 @@ struct MyApp : public al::App {
         temp = 0; std::cout<<std::endl;
       }
     }
-
-    screen.draw_image(100, 100,imageData); 
 
 
     // screen.draw_image(100,100,imageData);
@@ -101,9 +99,11 @@ struct MyApp : public al::App {
   }
 
   void onDraw (al::Graphics &g) override {
-    g.camera(Viewpoint::UNIT_ORTHO);  
+    // g.camera(Viewpoint::UNIT_ORTHO);  
+    g.camera(Viewpoint::IDENTITY);  
+
     g.clear();
-    screen.draw_image(100, 100,imageData); 
+    screen.draw_image(25, 25,imageData); 
 
     screen.render(g); //turns to identity
     // switch (CURRENT_PLUGIN) {

@@ -109,7 +109,7 @@ void plot:: draw_image(int x_position, int y_position, al::Image image) {
     int position = y_position * t_width + x_position;
     for (int y=0;y<image.height();y++) {
         for (int x=0;x<image.width();x++) {
-            int idx = ((x * 4) + y) * 4; //stride = 4
+            int idx = ((x * image.width()) + y) * 4; //stride = 4
             al::Color c (image.array()[idx]/255., image.array()[idx+1]/255., image.array()[idx+2]/255., image.array()[idx+3]/255.);
 
             plot_pixel(c, x_position + x, y_position + y);
