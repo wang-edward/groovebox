@@ -18,7 +18,7 @@ message("arm64Supported=${arm64Supported}")
 set(APP_NAME app)
 
 # path to main source file
-add_executable(${APP_NAME} src/main.cpp src/mpc.cpp src/sample.cpp src/SineEnv.cpp src/wav_editor.cpp)
+add_executable(${APP_NAME} src/main.cpp src/mpc.cpp src/sample.cpp src/SineEnv.cpp src/wav_editor.cpp src/plot.cpp)
 # add_executable(${APP_NAME} src/test.cpp src/track.cpp src/timeline.cpp)
 # add_executable(${APP_NAME} src/test.cpp)
 

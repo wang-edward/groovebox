@@ -37,22 +37,55 @@ typedef struct {
 #include "mpc.hpp"
 #include "SineEnv.hpp"
 #include "wav_editor.hpp"
+#include "plot.hpp"
+
 
 struct MyApp : public al::App {
   PLUGIN CURRENT_PLUGIN = PLUGIN_SAMPLER;
   mpc sampler;
   wav_editor editor;
   al::PolySynth pSynth;
+  plot screen;
+
+  Image imageData;
 
   void onInit() override {
     //TODO better config
+    dimensions(960,640);
   }
-  void onCreate() override {
+  void onCreate() override { //TODO cleanup
     editor.init();
     sampler.init();
+    screen.init();
+
+    const char *filename = "data/image/tiny.png";
+
+    imageData = Image(filename);
+
+    if (imageData.array().size() == 0) {
+      std::cout << "failed to load image" << std::endl;
+    }
+    std::cout << "loaded image size: " << imageData.width() << ", "
+         << imageData.height() << std::endl;
+
+    int temp = 0;
+    for (int i : imageData.array()) {
+      temp++;
+      std::cout<<i<<" ";
+      if (temp%4==0) {
+        temp = 0; std::cout<<std::endl;
+      }
+    }
+
+    screen.draw_image(100, 100,imageData); 
+
+
+    // screen.draw_image(100,100,imageData);
+
+
     // sampler.samples[0].gain = 0.1; //TODO: temporary mix fix
     // pSynth.allocatePolyphony<SineEnv>(16);
-    navControl().active(false);
+    // navControl().active(false);
     // nav().pos(0,0,10);
   }
   
@@ -70,17 +103,20 @@ struct MyApp : public al::App {
   void onDraw (al::Graphics &g) override {
     g.camera(Viewpoint::UNIT_ORTHO);  
     g.clear();
-    switch (CURRENT_PLUGIN) {
-      case (PLUGIN_SAMPLER):      // SAMPLER
-        sampler.draw(g);
-        break;
-      case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
-        pSynth.render(g);
-        break;
-      case (PLUGIN_WAV_EDITOR):
-        editor.render(g);
-        break;
-    }
+    screen.draw_image(100, 100,imageData); 
+
+    screen.render(g); //turns to identity
+    // switch (CURRENT_PLUGIN) {
+    //   case (PLUGIN_SAMPLER):      // SAMPLER
+    //     sampler.draw(g);
+    //     break;
+    //   case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
+    //     pSynth.render(g);
+    //     break;
+    //   case (PLUGIN_WAV_EDITOR):
+    //     editor.render(g);
+    //     break;
+    // }
   }
 
   bool onKeyDown(al::Keyboard const &k) override {
