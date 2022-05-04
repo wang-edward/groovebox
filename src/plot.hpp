@@ -23,6 +23,8 @@ class plot  {
     void draw_image(int x_position, int y_position, al::Image image);
     void vector_copy(std::vector<uint8_t> &v1, std::vector<uint8_t> &v2, int pos);
 
+    int get_image_index (int x, int y, al::Image image);
+
   protected:
     const int t_width = 240;
     const int t_height = 160;

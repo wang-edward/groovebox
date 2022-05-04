@@ -105,16 +105,35 @@ void plot:: reset_buffer() {
     std::fill(pixels.begin(), pixels.end(), 0);
 }
 
+int plot:: get_image_index (int x, int y, al::Image image) {
+    return ((x * image.width()) + y) * 4; //stride = 4
+}
+
 void plot:: draw_image(int x_position, int y_position, al::Image image) {
-    int position = y_position * t_width + x_position;
-    for (int y=0;y<image.height();y++) {
-        for (int x=0;x<image.width();x++) {
+    int position = x_position * t_width + y_position;
+    for (int x=0;x<image.height();x++) {
+        for (int y=0;y<image.width();y++) {
+
             int idx = ((x * image.width()) + y) * 4; //stride = 4
             al::Color c (image.array()[idx]/255., image.array()[idx+1]/255., image.array()[idx+2]/255., image.array()[idx+3]/255.);
 
-            plot_pixel(c, x_position + x, y_position + y);
+            plot_pixel(c, y_position + y, x_position + x);
         }
     }
+    // for (int x=image.width(); x>0; x--) {
+    //     for (int y=image.height();y>0; y--) {
+            
+        
+    //         int red = get_image_index(x, y, image);
+    //         int green = red + 1;
+    //         int blue = red + 2;
+    //         int a = red + 3;
+
+    //         al::Color c (image.array()[red]/255., image.array()[green]/255., image.array()[blue]/255., image.array()[a]/255.);
+
+    //         plot_pixel(c, x_position + x, y_position + y);
+    //     }
+    // }
     
     // vector_copy(image.array(), pixels, position);
 }

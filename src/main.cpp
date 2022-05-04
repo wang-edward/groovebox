@@ -58,8 +58,7 @@ struct MyApp : public al::App {
     sampler.init();
     screen.init();
 
-    const char *filename = "data/image/doom_midway1.png";
-
+    const char *filename = "data/image/rectangle.png";
     imageData = Image(filename);
 
     if (imageData.array().size() == 0) {
@@ -103,7 +102,7 @@ struct MyApp : public al::App {
     g.camera(Viewpoint::IDENTITY);  
 
     g.clear();
-    screen.draw_image(25, 25,imageData); 
+    screen.draw_image(75, 75,imageData); 
 
     screen.render(g); //turns to identity
     // switch (CURRENT_PLUGIN) {
