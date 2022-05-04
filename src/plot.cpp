@@ -24,6 +24,10 @@ void plot:: init() {
     mesh.texCoord(0, 0);
     mesh.texCoord(1, 1);
     mesh.texCoord(1, 0);
+    // mesh.texCoord(1, 0);
+    // mesh.texCoord(1, 1);
+    // mesh.texCoord(0, 0);
+    // mesh.texCoord(0, 1);
 }
 
 // IDEA pass a reference to Graphics& g and plot& p
@@ -36,7 +40,7 @@ void plot:: render(al::Graphics& g) {
     g.camera(al::Viewpoint::IDENTITY);  
     al::Color col = al::HSV(1, 1, 1);
 
-    // circle(20,20, 20, col);
+    circle(75,75, 30, col);
 
     tex.submit(pixels.data());
     tex.bind();
@@ -106,18 +110,28 @@ void plot:: reset_buffer() {
 }
 
 int plot:: get_image_index (int x, int y, al::Image image) {
-    return ((x * image.width()) + y) * 4; //stride = 4
+    return ((y * image.width()) + x) * 4; //stride = 4
 }
 
 void plot:: draw_image(int x_position, int y_position, al::Image image) {
+    x_position = x_position + (image.width())/2;
+    y_position = y_position + (image.height())/2;
+
     int position = x_position * t_width + y_position;
-    for (int x=0;x<image.height();x++) {
-        for (int y=0;y<image.width();y++) {
+    for (int y=image.height()-1;y>=0;y--) {
+        for (int x=image.width()-1;x>=0;x--) {
 
-            int idx = ((x * image.width()) + y) * 4; //stride = 4
-            al::Color c (image.array()[idx]/255., image.array()[idx+1]/255., image.array()[idx+2]/255., image.array()[idx+3]/255.);
+            
+            int red = get_image_index(x, y, image);
+            int green = red + 1;
+            int blue = red + 2;
+            int a = red + 3;
 
-            plot_pixel(c, y_position + y, x_position + x);
+            if (a!=0) {
+                al::Color c (image.array()[red]/255., image.array()[green]/255., image.array()[blue]/255., image.array()[a]/255.);
+
+                plot_pixel(c, x_position - x, y_position - y);
+            }
         }
     }
     // for (int x=image.width(); x>0; x--) {
@@ -128,6 +142,8 @@ void plot:: draw_image(int x_position, int y_position, al::Image image) {
     //         int green = red + 1;
     //         int blue = red + 2;
     //         int a = red + 3;
+
+            // al::Color c (image.array()[idx]/255., image.array()[idx+1]/255., image.array()[idx+2]/255., image.array()[idx+3]/255.);
 
     //         al::Color c (image.array()[red]/255., image.array()[green]/255., image.array()[blue]/255., image.array()[a]/255.);
 
