@@ -114,6 +114,12 @@ int plot:: get_image_index (int x, int y, al::Image image) {
 }
 
 void plot:: draw_image(int x_position, int y_position, al::Image image) {
+
+    if (image.width() > t_width || image.height() > t_height) {
+        std::cout<<"ImAGE TOO BIG!"<<std::endl;;
+        return;
+    }   
+
     x_position = x_position + (image.width())/2;
     y_position = y_position + (image.height())/2;
 
