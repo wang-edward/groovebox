@@ -33,11 +33,11 @@ typedef struct {
   int numblocks;
 } meters_t;
 
-#include "sample.hpp"
-#include "mpc.hpp"
-#include "SineEnv.hpp"
-#include "wav_editor.hpp"
-#include "plot.hpp"
+#include "header/sample.hpp"
+#include "header/mpc.hpp"
+#include "header/SineEnv.hpp"
+#include "header/wav_editor.hpp"
+#include "header/plot.hpp"
 
 
 struct MyApp : public al::App {
@@ -90,11 +90,21 @@ struct MyApp : public al::App {
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
           sampler.render(io);
-        break;
+        break;  
       case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
         pSynth.render(io);
         break;
     }
+  }
+
+  int temp = 0;
+
+  void onAnimate (double dt) override {
+    if (temp >= 100) temp =0;
+    // Color col(255,0,0,255);
+    Color col = HSV(1,1,1);
+    screen.circle(75,75, temp, col);
+    temp++;
   }
 
   void onDraw (al::Graphics &g) override {

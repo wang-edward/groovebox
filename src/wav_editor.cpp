@@ -1,4 +1,4 @@
-#include "wav_editor.hpp"
+#include "header/wav_editor.hpp"
 
 void wav_editor:: init() {
     init_path();
