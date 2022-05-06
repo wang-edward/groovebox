@@ -1,4 +1,4 @@
-#include "SineEnv.hpp"
+#include "header/SineEnv.hpp"
 
 SineEnv:: SineEnv() {
     mAmpEnv.curve(0);  // make segments lines
