@@ -33,27 +33,56 @@ typedef struct {
   int numblocks;
 } meters_t;
 
-#include "sample.hpp"
-#include "mpc.hpp"
-#include "SineEnv.hpp"
-#include "wav_editor.hpp"
+#include "header/sample.hpp"
+#include "header/mpc.hpp"
+#include "header/SineEnv.hpp"
+#include "header/wav_editor.hpp"
+#include "header/plot.hpp"
+
 
 struct MyApp : public al::App {
   PLUGIN CURRENT_PLUGIN = PLUGIN_SAMPLER;
   mpc sampler;
   wav_editor editor;
   al::PolySynth pSynth;
+  plot screen;
+
+  Image imageData;
 
   void onInit() override {
     //TODO better config
     dimensions(960,640);
   }
-  void onCreate() override {
+  void onCreate() override { //TODO cleanup
     editor.init();
     sampler.init();
+    screen.init();
+
+    const char *filename = "data/image/rectangle.png";
+    imageData = Image(filename);
+
+    if (imageData.array().size() == 0) {
+      std::cout << "failed to load image" << std::endl;
+    }
+    std::cout << "loaded image size: " << imageData.width() << ", "
+         << imageData.height() << std::endl;
+
+    int temp = 0;
+    for (int i : imageData.array()) {
+      temp++;
+      std::cout<<i<<" ";
+      if (temp%4==0) {
+        temp = 0; std::cout<<std::endl;
+      }
+    }
+
+
+    // screen.draw_image(100,100,imageData);
+
+
     // sampler.samples[0].gain = 0.1; //TODO: temporary mix fix
     // pSynth.allocatePolyphony<SineEnv>(16);
-    navControl().active(false);
+    // navControl().active(false);
     // nav().pos(0,0,10);
   }
   
@@ -61,27 +90,42 @@ struct MyApp : public al::App {
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
           sampler.render(io);
-        break;
+        break;  
       case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
         pSynth.render(io);
         break;
     }
   }
 
+  int temp = 0;
+
+  void onAnimate (double dt) override {
+    if (temp >= 100) temp =0;
+    // Color col(255,0,0,255);
+    Color col = HSV(1,1,1);
+    screen.circle(75,75, temp, col);
+    temp++;
+  }
+
   void onDraw (al::Graphics &g) override {
-    g.camera(Viewpoint::UNIT_ORTHO);  
+    // g.camera(Viewpoint::UNIT_ORTHO);  
+    g.camera(Viewpoint::IDENTITY);  
+
     g.clear();
-    switch (CURRENT_PLUGIN) {
-      case (PLUGIN_SAMPLER):      // SAMPLER
-        sampler.draw(g);
-        break;
-      case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
-        pSynth.render(g);
-        break;
-      case (PLUGIN_WAV_EDITOR):
-        editor.render(g);
-        break;
-    }
+    screen.draw_image(75, 75,imageData); 
+
+    screen.render(g); //turns to identity
+    // switch (CURRENT_PLUGIN) {
+    //   case (PLUGIN_SAMPLER):      // SAMPLER
+    //     sampler.draw(g);
+    //     break;
+    //   case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
+    //     pSynth.render(g);
+    //     break;
+    //   case (PLUGIN_WAV_EDITOR):
+    //     editor.render(g);
+    //     break;
+    // }
   }
 
   bool onKeyDown(al::Keyboard const &k) override {

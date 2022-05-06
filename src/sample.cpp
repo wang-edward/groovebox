@@ -1,4 +1,4 @@
-#include "sample.hpp"
+#include "header/sample.hpp"
 
 //default constructor
 sample:: sample() {
