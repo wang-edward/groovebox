@@ -8,10 +8,10 @@ void plot:: init() {
 
     tex.filterMag(al::Texture::NEAREST); // magnification filter is nearest-neighbour interpolation
     tex.wrap(GL_CLAMP_TO_EDGE); //TODO doesnt work for some reason
-    tex.create2D(t_width, t_height, al::Texture::RGBA8, al::Texture::RGBA, al::Texture::UBYTE);
+    tex.create2D(this->width, this->height, al::Texture::RGBA8, al::Texture::RGBA, al::Texture::UBYTE);
 
     stride = tex.numComponents();
-    pixels.resize(stride * t_width * t_height);
+    pixels.resize(stride * this->width * this->height);
 
     //setup mesh
     mesh.primitive(al::Mesh::TRIANGLE_STRIP);
@@ -47,7 +47,7 @@ void plot:: render(al::Graphics& g) {
 }
 
 void plot:: plot_pixel(al::Color c, int x, int y) {
-    int idx = y * t_width + x;
+    int idx = y * this->width + x;
 
     pixels[idx * stride + 0] = c.r * 255.;
     pixels[idx * stride + 1] = c.g * 255.;

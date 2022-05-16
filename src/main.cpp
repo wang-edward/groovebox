@@ -38,6 +38,8 @@ typedef struct {
 #include "header/SineEnv.hpp"
 #include "header/wav_editor.hpp"
 #include "header/plot.hpp"
+#include "header/circle.hpp"
+#include "header/sprite.hpp"
 
 
 struct MyApp : public al::App {
@@ -48,6 +50,8 @@ struct MyApp : public al::App {
   plot screen;
 
   Image imageData;
+
+  sprite my_sprite;
 
   void onInit() override {
     //TODO better config
@@ -103,16 +107,23 @@ struct MyApp : public al::App {
     if (temp >= 100) temp =0;
     // Color col(255,0,0,255);
     Color col = HSV(1,1,1);
-    screen.circle(75,75, temp, col);
+    // screen.circle(75,75, temp, col);
     temp++;
   }
+
+  circle myball = circle (75,75,50);
 
   void onDraw (al::Graphics &g) override {
     // g.camera(Viewpoint::UNIT_ORTHO);  
     g.camera(Viewpoint::IDENTITY);  
 
     g.clear();
-    screen.draw_image(75, 75,imageData); 
+    // screen.draw_image(75, 75,imageData); 
+
+    Color col = HSV(1,1,1);
+
+    myball.draw(col, screen);
+    my_sprite.draw_image(120,120,imageData, screen);
 
     screen.render(g); //turns to identity
     // switch (CURRENT_PLUGIN) {

@@ -1,12 +1,12 @@
-#include "header/image.hpp"
+#include "header/sprite.hpp"
 
-int image:: get_image_index (int x, int y, al::Image image) {
+int sprite:: get_image_index (int x, int y, al::Image image) {
     return ((y * image.width()) + x) * 4; //stride = 4
 }
 
-void image:: draw_image(int x_position, int y_position, al::Image image) {
+void sprite:: draw_image(int x_position, int y_position, al::Image image, plot& p) {
 
-    if (image.width() > t_width || image.height() > t_height) {
+    if (image.width() > plot::width || image.height() > plot::height) {
         std::cout<<"ImAGE TOO BIG!"<<std::endl;;
         return;
     }   
@@ -14,7 +14,7 @@ void image:: draw_image(int x_position, int y_position, al::Image image) {
     x_position = x_position + (image.width())/2;
     y_position = y_position + (image.height())/2;
 
-    int position = x_position * t_width + y_position;
+    int position = x_position * plot::width + y_position;
     for (int y=image.height()-1;y>=0;y--) {
         for (int x=image.width()-1;x>=0;x--) {
 
@@ -25,7 +25,7 @@ void image:: draw_image(int x_position, int y_position, al::Image image) {
 
             if (a!=0) {
                 al::Color c (image.array()[red]/255., image.array()[green]/255., image.array()[blue]/255., image.array()[a]/255.);
-                plot_pixel(c, x_position - x, y_position - y);
+                p.plot_pixel(c, x_position - x, y_position - y);
             }
         }
     }
