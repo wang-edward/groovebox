@@ -6,8 +6,12 @@
 class circle {
 
     public:
-
-        circle(int x, int y, int radius);
+        circle();
+        circle(int x, int y, int radius, al::Color c);
+        void render(plot& p);
+        void transform_position(int x_center, int y_center);
+        void transform_radius(int radius);
+        void transform_color(al::Color c);
         void draw(al::Color c, plot& p);
         void draw_circle(int x_center, int y_center, int radius, al::Color c, plot& p);
         void draw_circle_points(int cx, int cy, int x, int y, al::Color pix, plot& p);
@@ -16,7 +20,7 @@ class circle {
         int x_position;
         int y_position;
         int radius;
-
+        al::Color color;
 };
 
 #endif

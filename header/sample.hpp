@@ -16,8 +16,8 @@ class sample {
     gam::Env<3> amp_envelope;
     float gain;
     al::Color col = al::HSV(0.66,1,1);
-    circle disc = circle(100,100, 30, col);
-
+    // circle disc = circle(100,100, 30, col);
+    al::Mesh disc;
 
     // void init() override { addDisc(disc, 1.0, 30); }
     

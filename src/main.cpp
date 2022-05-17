@@ -55,6 +55,8 @@ struct MyApp : public al::App {
 
   sample my_sample;
 
+  circle my_circle;
+
   void onInit() override {
     //TODO better config
     dimensions(960,640);
@@ -81,6 +83,8 @@ struct MyApp : public al::App {
         temp = 0; std::cout<<std::endl;
       }
     }
+    Color col = HSV(1,1,1);
+    my_circle.transform_color(col);
 
 
     // screen.draw_image(100,100,imageData);
@@ -107,13 +111,11 @@ struct MyApp : public al::App {
 
   void onAnimate (double dt) override {
     if (temp >= 100) temp =0;
-    // Color col(255,0,0,255);
-    Color col = HSV(1,1,1);
-    // screen.circle(75,75, temp, col);
+    my_circle.transform_position(temp,temp);
+    my_circle.transform_radius(temp);
+
     temp++;
   }
-
-  circle myball = circle (75,75,50);
 
   void onDraw (al::Graphics &g) override {
     // g.camera(Viewpoint::UNIT_ORTHO);  
@@ -123,10 +125,9 @@ struct MyApp : public al::App {
     // screen.draw_image(75, 75,imageData); 
 
     Color col = HSV(1,1,1);
-
-    myball.draw(col, screen);
     my_sprite.draw_image(120,120,imageData, screen);
-    my_sample.render(screen);
+    my_circle.render(screen);
+    // my_sample.render(screen); TODO may 17
 
     screen.render(g); //turns to identity
     // switch (CURRENT_PLUGIN) {
