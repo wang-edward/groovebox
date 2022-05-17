@@ -55,6 +55,35 @@ void plot:: plot_pixel(al::Color c, int x, int y) {
     pixels[idx * stride + 3] = c.a;
 }
 
+void plot::plot_line(al::Color c, int xa, int ya, int xb, int yb) {
+    int dx = abs(xa - xb), dy = abs(ya - yb);
+	int p = 2*dy - dx;
+	int twoDy = 2*dy, twoDyDx = 2*(dy - dx);
+	int x, y, xEnd;
+	/*Determine which points to start and End */
+	if(xa>xb){
+	   x = xb;
+	   y = yb;
+	   xEnd = xa;
+	}
+	else{
+	  x = xa; y = ya ; xEnd =  xb;
+	}
+	plot_pixel(c, x, y);
+	while(x < xEnd){
+	   x++;
+	   if(p<0){
+	     p = p + twoDy;
+	   }
+	   else{
+	     y++;
+	     p = p + twoDyDx;
+	   }
+	   plot_pixel(c, x, y);
+	}
+}
+
+
 //try to avoid
 void plot:: reset_buffer() {
     std::fill(pixels.begin(), pixels.end(), 0);

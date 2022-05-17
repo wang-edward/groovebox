@@ -110,7 +110,7 @@ struct MyApp : public al::App {
   int temp = 0;
 
   void onAnimate (double dt) override {
-    if (temp >= 100) temp =0;
+    if (temp >= 118) temp =0;
     my_circle.transform_position(temp,temp);
     my_circle.transform_radius(temp);
 
@@ -124,11 +124,13 @@ struct MyApp : public al::App {
     g.clear();
     // screen.draw_image(75, 75,imageData); 
 
-    Color col = HSV(1,1,1);
+    Color col = HSV(0.66,1,1);
     my_sprite.draw_image(120,120,imageData, screen);
     my_circle.render(screen);
     my_sample.render(screen); 
-    my_sample.reset_color();
+    // my_sample.reset_color();
+  
+    screen.plot_line(col, 0,0,240,160);
 
     screen.render(g); //turns to identity
     // switch (CURRENT_PLUGIN) {

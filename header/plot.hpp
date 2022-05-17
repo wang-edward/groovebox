@@ -20,6 +20,7 @@ class plot  {
     void render(al::Graphics& g);
     void reset_buffer();
     void plot_pixel(al::Color c, int x, int y);
+    void plot_line(al::Color c, int x_start, int y_start, int x_end, int y_end);
 
   protected:
     al::Texture tex;
