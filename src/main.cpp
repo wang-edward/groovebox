@@ -127,7 +127,8 @@ struct MyApp : public al::App {
     Color col = HSV(1,1,1);
     my_sprite.draw_image(120,120,imageData, screen);
     my_circle.render(screen);
-    // my_sample.render(screen); TODO may 17
+    my_sample.render(screen); 
+    my_sample.reset_color();
 
     screen.render(g); //turns to identity
     // switch (CURRENT_PLUGIN) {

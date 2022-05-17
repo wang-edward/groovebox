@@ -3,7 +3,6 @@
 //default constructor
 sample:: sample() {
     gain = 0.2;
-    addDisc(disc, 0.25, 30);
     reset_color();
 }
 
@@ -47,13 +46,12 @@ void sample:: update_envelope(float a, float d, float s, float r) {
 }
 
 void sample:: reset_color() {
-    // if (!disc.colors().empty()) {
-        for (int i=0;i<disc.colors().size();i++) {
-            disc.colors().pop_back();
-        }   
-    // }
-    // disc.colors().pop_back();
-    disc.color((std::rand()%100)/20,(std::rand()%100)/20,(std::rand()%100)/20);
+    float h = std::rand()/(float)(RAND_MAX);
+    float s = std::rand()/(float)(RAND_MAX);
+    float v = std::rand()/(float)(RAND_MAX);
+
+    al::Color temp = al::HSV(h,s,v);
+    disc.transform_color(temp);
 }
 
 void sample:: trigger_on() {
@@ -66,8 +64,8 @@ float sample:: output() {
     return player() * gain;
 }
 
-void render (plot& p) {
-    // disc.render(p);
+void sample:: render (plot& p) {
+    disc.render(p);
 }
 
 // void sample::onProcess(AudioIOData& io) { cout<<"asd"; }

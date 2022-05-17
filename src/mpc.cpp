@@ -39,7 +39,7 @@ void mpc:: color_discs() {
 
 void mpc:: position_discs() {
     for (int i=0;i<NUMBER_SAMPLES;i++) {
-        samples[i].disc.translate(((i%4)-1.5)/2,(floor(i/4)-1)/2,0);
+        // samples[i].disc.translate(((i%4)-1.5)/2,(floor(i/4)-1)/2,0); //TODO MAY 17
     }
 }
 
@@ -48,7 +48,7 @@ void mpc:: draw(al::Graphics &g) {
 
     g.meshColor();
     for (int i=0;i<NUMBER_SAMPLES;i++) {
-        g.draw(samples[i].disc);
+        // g.draw(samples[i].disc); //TODO MAY 17
     }
     
     draw_gui(g);
