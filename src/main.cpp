@@ -53,6 +53,8 @@ struct MyApp : public al::App {
 
   sprite my_sprite;
 
+  sample my_sample;
+
   void onInit() override {
     //TODO better config
     dimensions(960,640);
@@ -124,6 +126,7 @@ struct MyApp : public al::App {
 
     myball.draw(col, screen);
     my_sprite.draw_image(120,120,imageData, screen);
+    my_sample.render(screen);
 
     screen.render(g); //turns to identity
     // switch (CURRENT_PLUGIN) {

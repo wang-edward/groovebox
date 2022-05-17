@@ -66,6 +66,10 @@ float sample:: output() {
     return player() * gain;
 }
 
+void render (plot& p) {
+    disc.render(p);
+}
+
 // void sample::onProcess(AudioIOData& io) { cout<<"asd"; }
 
 // void sample::onProcess(Graphics& g) { cout<<"asd"; }

@@ -6,6 +6,8 @@
 #include "al/graphics/al_Shapes.hpp"
 #include <iostream>
 #include <random>
+#include "header/circle.hpp"
+#include "header/plot.hpp"
 
 class sample {
   public:
@@ -13,7 +15,8 @@ class sample {
     gam::SamplePlayer<> player;
     gam::Env<3> amp_envelope;
     float gain;
-    al::Mesh disc;
+    al::Color col = al::HSV(0.66,1,1);
+    circle disc = circle(100,100, 30, col);
 
 
     // void init() override { addDisc(disc, 1.0, 30); }
