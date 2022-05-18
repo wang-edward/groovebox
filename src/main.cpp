@@ -83,14 +83,9 @@ struct MyApp : public al::App {
         temp = 0; std::cout<<std::endl;
       }
     }
-    Color col = HSV(1,1,1);
-    my_circle.transform_color(col);
 
 
-    // screen.draw_image(100,100,imageData);
 
-
-    // sampler.samples[0].gain = 0.1; //TODO: temporary mix fix
     // pSynth.allocatePolyphony<SineEnv>(16);
     // navControl().active(false);
     // nav().pos(0,0,10);
@@ -125,25 +120,27 @@ struct MyApp : public al::App {
     // screen.draw_image(75, 75,imageData); 
 
     Color col = HSV(0.66,1,1);
-    my_sprite.draw_image(120,120,imageData, screen);
-    my_circle.render(screen);
-    my_sample.render(screen); 
+    // my_sprite.draw_image(120,120,imageData, screen);
+    // my_circle.render(screen);
+    // my_sample.render(screen); 
     // my_sample.reset_color();
   
+    
+    switch (CURRENT_PLUGIN) {
+      case (PLUGIN_SAMPLER):      // SAMPLER
+        sampler.render(screen);
+        // sampler.color_discs();
+        break;
+      case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
+        pSynth.render(g);
+        break;
+      case (PLUGIN_WAV_EDITOR):
+        editor.render(g);
+        break;
+    }
     screen.plot_line(col, 0,0,240,160);
-
     screen.render(g); //turns to identity
-    // switch (CURRENT_PLUGIN) {
-    //   case (PLUGIN_SAMPLER):      // SAMPLER
-    //     sampler.draw(g);
-    //     break;
-    //   case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
-    //     pSynth.render(g);
-    //     break;
-    //   case (PLUGIN_WAV_EDITOR):
-    //     editor.render(g);
-    //     break;
-    // }
+
   }
 
   bool onKeyDown(al::Keyboard const &k) override {

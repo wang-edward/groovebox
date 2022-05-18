@@ -17,19 +17,19 @@ sample:: sample (const char* _path, float _gain) {
     gain = _gain;
 }
 //copy constructor
-sample:: sample (const sample &m) {
-    path = m.path;
-    gain = m.gain;
-    load_path(path);
-}
+// sample:: sample (const sample &m) {
+//     path = m.path;
+//     gain = m.gain;
+//     load_path(path);
+// }
 
-sample& sample:: operator=(const sample& new_sample) {
+// sample& sample:: operator=(const sample& new_sample) {
 
-}
+// }
 
-sample:: ~sample() {
+// sample:: ~sample() {
 
-}
+// }
 
 void sample:: load_path(const char* _path) {
     path = _path;
@@ -50,7 +50,7 @@ void sample:: reset_color() {
     float s = std::rand()/(float)(RAND_MAX);
     float v = std::rand()/(float)(RAND_MAX);
 
-    al::Color temp = al::HSV(h,s,v);
+    al::Color temp = al::HSV(h,1.0,1.0);
     disc.transform_color(temp);
 }
 

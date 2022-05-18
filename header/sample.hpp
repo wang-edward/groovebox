@@ -23,13 +23,13 @@ class sample {
     sample (const char* _path, float _gain);
     
     //copy constructor
-    sample (const sample &m);
+    // sample (const sample &m);
 
     //copy assignment operator
-    sample& operator=(const sample& new_sample);
+    // sample& operator=(const sample& new_sample);
 
-    //destructor
-    ~sample();
+    // //destructor
+    // ~sample();
     
     // void onProcess(AudioIOData& io) override;
 

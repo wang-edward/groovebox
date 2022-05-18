@@ -3,7 +3,8 @@
 void mpc:: init() {
     init_files();
     position_discs();
-    init_font();
+    // init_font();
+    color_discs();
 }
 
 void mpc:: init_font() {
@@ -40,28 +41,18 @@ void mpc:: color_discs() {
 void mpc:: position_discs() {
     for (int i=0;i<NUMBER_SAMPLES;i++) {
         // samples[i].disc.translate(((i%4)-1.5)/2,(floor(i/4)-1)/2,0); //TODO MAY 17
+        int x = i%4;
+        int y = floor(i/4);
+        
+        samples[i].disc.transform_position(30 + 60*x, 20 + 40*y);
+        samples[i].disc.transform_radius(15);
     }
 }
 
-void mpc:: draw(al::Graphics &g) {
-    g.clear();
-
-    g.meshColor();
-    for (int i=0;i<NUMBER_SAMPLES;i++) {
-        // g.draw(samples[i].disc); //TODO MAY 17
+void mpc:: render (plot& p) {
+    for (sample x : samples) {
+        x.render(p);
     }
-    
-    draw_gui(g);
-}
-
-void mpc:: draw_gui(al::Graphics &g) {
-    g.blending(true);
-    g.blendTrans();
-    g.texture();
-    font.tex.bind();
-    g.draw(text);
-    font.tex.unbind();
-    g.blending(false);
 }
 
 void mpc:: render(al::AudioIOData &io) {

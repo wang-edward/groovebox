@@ -35,7 +35,6 @@ void plot:: init() {
 
 void plot:: render(al::Graphics& g) {
     g.camera(al::Viewpoint::IDENTITY);  
-    al::Color col = al::HSV(1, 1, 1);
 
     tex.submit(pixels.data());
     tex.bind();
