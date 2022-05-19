@@ -40,3 +40,5 @@ apps/
 *.vsix
 
 .DS_Store
+allolib
+al_ext

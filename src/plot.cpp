@@ -8,10 +8,10 @@ void plot:: init() {
 
     tex.filterMag(al::Texture::NEAREST); // magnification filter is nearest-neighbour interpolation
     tex.wrap(GL_CLAMP_TO_EDGE); //TODO doesnt work for some reason
-    tex.create2D(t_width, t_height, al::Texture::RGBA8, al::Texture::RGBA, al::Texture::UBYTE);
+    tex.create2D(this->width, this->height, al::Texture::RGBA8, al::Texture::RGBA, al::Texture::UBYTE);
 
     stride = tex.numComponents();
-    pixels.resize(stride * t_width * t_height);
+    pixels.resize(stride * this->width * this->height);
 
     //setup mesh
     mesh.primitive(al::Mesh::TRIANGLE_STRIP);
@@ -35,7 +35,6 @@ void plot:: init() {
 
 void plot:: render(al::Graphics& g) {
     g.camera(al::Viewpoint::IDENTITY);  
-    al::Color col = al::HSV(1, 1, 1);
 
     tex.submit(pixels.data());
     tex.bind();
@@ -47,13 +46,42 @@ void plot:: render(al::Graphics& g) {
 }
 
 void plot:: plot_pixel(al::Color c, int x, int y) {
-    int idx = y * t_width + x;
+    int idx = y * this->width + x;
 
     pixels[idx * stride + 0] = c.r * 255.;
     pixels[idx * stride + 1] = c.g * 255.;
     pixels[idx * stride + 2] = c.b * 255.;
     pixels[idx * stride + 3] = c.a;
 }
+
+void plot::plot_line(al::Color c, int xa, int ya, int xb, int yb) {
+    int dx = abs(xa - xb), dy = abs(ya - yb);
+	int p = 2*dy - dx;
+	int twoDy = 2*dy, twoDyDx = 2*(dy - dx);
+	int x, y, xEnd;
+	/*Determine which points to start and End */
+	if(xa>xb){
+	   x = xb;
+	   y = yb;
+	   xEnd = xa;
+	}
+	else{
+	  x = xa; y = ya ; xEnd =  xb;
+	}
+	plot_pixel(c, x, y);
+	while(x < xEnd){
+	   x++;
+	   if(p<0){
+	     p = p + twoDy;
+	   }
+	   else{
+	     y++;
+	     p = p + twoDyDx;
+	   }
+	   plot_pixel(c, x, y);
+	}
+}
+
 
 //try to avoid
 void plot:: reset_buffer() {

@@ -6,11 +6,12 @@
 #include "al/graphics/al_Graphics.hpp"
 #include "al/graphics/al_Font.hpp"
 #include "al/io/al_AudioIO.hpp"
+#include "header/plot.hpp"
 
 class mpc  {
 
   public:
-    static const int NUMBER_SAMPLES = 12;
+    static const int NUMBER_SAMPLES = 16;
     sample samples[NUMBER_SAMPLES];
     al::Font font;
     al::Mesh text;
@@ -19,8 +20,7 @@ class mpc  {
     void init_files();
     void color_discs();
     void position_discs();
-    void draw(al::Graphics &g);
-    void draw_gui(al::Graphics &g);
+    void render(plot& p);
     void render(al::AudioIOData &io);
     void key_down(int key);
 };

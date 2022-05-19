@@ -38,6 +38,8 @@ typedef struct {
 #include "header/SineEnv.hpp"
 #include "header/wav_editor.hpp"
 #include "header/plot.hpp"
+#include "header/circle.hpp"
+#include "header/sprite.hpp"
 
 
 struct MyApp : public al::App {
@@ -47,7 +49,11 @@ struct MyApp : public al::App {
   al::PolySynth pSynth;
   plot screen;
 
-  Image imageData;
+  sprite my_sprite;
+
+  sample my_sample;
+
+  circle my_circle;
 
   void onInit() override {
     //TODO better config
@@ -58,29 +64,8 @@ struct MyApp : public al::App {
     sampler.init();
     screen.init();
 
-    const char *filename = "data/image/rectangle.png";
-    imageData = Image(filename);
+    my_sprite = sprite("data/image/rectangle.png", 100, 100);
 
-    if (imageData.array().size() == 0) {
-      std::cout << "failed to load image" << std::endl;
-    }
-    std::cout << "loaded image size: " << imageData.width() << ", "
-         << imageData.height() << std::endl;
-
-    int temp = 0;
-    for (int i : imageData.array()) {
-      temp++;
-      std::cout<<i<<" ";
-      if (temp%4==0) {
-        temp = 0; std::cout<<std::endl;
-      }
-    }
-
-
-    // screen.draw_image(100,100,imageData);
-
-
-    // sampler.samples[0].gain = 0.1; //TODO: temporary mix fix
     // pSynth.allocatePolyphony<SineEnv>(16);
     // navControl().active(false);
     // nav().pos(0,0,10);
@@ -100,10 +85,10 @@ struct MyApp : public al::App {
   int temp = 0;
 
   void onAnimate (double dt) override {
-    if (temp >= 100) temp =0;
-    // Color col(255,0,0,255);
-    Color col = HSV(1,1,1);
-    screen.circle(75,75, temp, col);
+    if (temp >= 118) temp =0;
+    my_circle.transform_position(temp,temp);
+    my_circle.transform_radius(temp);
+
     temp++;
   }
 
@@ -112,20 +97,31 @@ struct MyApp : public al::App {
     g.camera(Viewpoint::IDENTITY);  
 
     g.clear();
-    screen.draw_image(75, 75,imageData); 
+    // screen.draw_image(75, 75,imageData); 
 
+    Color col = HSV(0.66,1,1);
+    // my_sprite.draw_image(120,120,imageData, screen);
+    // my_circle.render(screen);
+    // my_sample.render(screen); 
+    // my_sample.reset_color();
+  
+    my_sprite.render(screen);
+    
+    switch (CURRENT_PLUGIN) {
+      case (PLUGIN_SAMPLER):      // SAMPLER
+        sampler.render(screen);
+        // sampler.color_discs();
+        break;
+      case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
+        pSynth.render(g);
+        break;
+      case (PLUGIN_WAV_EDITOR):
+        editor.render(g);
+        break;
+    }
+    // screen.plot_line(col, 0,0,240,160);
     screen.render(g); //turns to identity
-    // switch (CURRENT_PLUGIN) {
-    //   case (PLUGIN_SAMPLER):      // SAMPLER
-    //     sampler.draw(g);
-    //     break;
-    //   case (PLUGIN_SUBTRACTIVE):  // SUBTRACTIVE SYNTH
-    //     pSynth.render(g);
-    //     break;
-    //   case (PLUGIN_WAV_EDITOR):
-    //     editor.render(g);
-    //     break;
-    // }
+
   }
 
   bool onKeyDown(al::Keyboard const &k) override {

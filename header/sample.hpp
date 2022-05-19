@@ -6,15 +6,15 @@
 #include "al/graphics/al_Shapes.hpp"
 #include <iostream>
 #include <random>
+#include "header/circle.hpp"
+#include "header/plot.hpp"
+#include <cstdlib>
 
 class sample {
   public:
     const char* path;
-    gam::SamplePlayer<> player;
-    gam::Env<3> amp_envelope;
-    float gain;
-    al::Mesh disc;
-
+    al::Color col = al::HSV(1,1,1);
+    circle disc = circle(100,100, 30, col);
 
     // void init() override { addDisc(disc, 1.0, 30); }
     
@@ -23,13 +23,13 @@ class sample {
     sample (const char* _path, float _gain);
     
     //copy constructor
-    sample (const sample &m);
+    // sample (const sample &m);
 
     //copy assignment operator
-    sample& operator=(const sample& new_sample);
+    // sample& operator=(const sample& new_sample);
 
-    //destructor
-    ~sample();
+    // //destructor
+    // ~sample();
     
     // void onProcess(AudioIOData& io) override;
 
@@ -46,6 +46,11 @@ class sample {
     void reset_color();
     void trigger_on();
     float output();
+    void render(plot& p);
+    protected:
+      gam::SamplePlayer<> player;
+      gam::Env<3> amp_envelope;
+      float gain;
 };
 
 #endif
