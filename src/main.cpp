@@ -49,8 +49,6 @@ struct MyApp : public al::App {
   al::PolySynth pSynth;
   plot screen;
 
-  Image imageData;
-
   sprite my_sprite;
 
   sample my_sample;
@@ -66,25 +64,7 @@ struct MyApp : public al::App {
     sampler.init();
     screen.init();
 
-    const char *filename = "data/image/rectangle.png";
-    imageData = Image(filename);
-
-    if (imageData.array().size() == 0) {
-      std::cout << "failed to load image" << std::endl;
-    }
-    std::cout << "loaded image size: " << imageData.width() << ", "
-         << imageData.height() << std::endl;
-
-    int temp = 0;
-    for (int i : imageData.array()) {
-      temp++;
-      std::cout<<i<<" ";
-      if (temp%4==0) {
-        temp = 0; std::cout<<std::endl;
-      }
-    }
-
-
+    my_sprite = sprite("data/image/rectangle.png", 100, 100);
 
     // pSynth.allocatePolyphony<SineEnv>(16);
     // navControl().active(false);
@@ -125,6 +105,7 @@ struct MyApp : public al::App {
     // my_sample.render(screen); 
     // my_sample.reset_color();
   
+    my_sprite.render(screen);
     
     switch (CURRENT_PLUGIN) {
       case (PLUGIN_SAMPLER):      // SAMPLER
@@ -138,7 +119,7 @@ struct MyApp : public al::App {
         editor.render(g);
         break;
     }
-    screen.plot_line(col, 0,0,240,160);
+    // screen.plot_line(col, 0,0,240,160);
     screen.render(g); //turns to identity
 
   }
